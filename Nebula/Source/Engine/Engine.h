@@ -34,6 +34,21 @@ class Engine
 		Constructs an engine with the given limits.
 		@param limits The desired limits */
 		Engine(const EngineLimits& limits);
+
+		/**
+		Starts up the engine. 
+		@return True if the start up was successful, false if it was not */
+		bool startUp();
+
+		/**
+		Shuts down the engine.
+		@return True if the shut down was successful, false if it was not */
+		bool shutDown();
+
+		/**
+		Runs the engines main loop. A successful start up is required prior to calling this
+		function. */
+		void run();
 };
 
 #endif

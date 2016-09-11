@@ -24,9 +24,6 @@ The launcher is the entry point to the program.
 
 int main()
 {
-	EngineLimits limits;
-	Engine engine(limits);
-
 	///////////////////////////////////////////////////////////////////////////
 	// Testing area
 
@@ -63,12 +60,41 @@ int main()
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	std::cout << "Enter 'q' to exit.." << std::endl;
+	std::cout << "1) Exit program" << std::endl;
+	std::cout << "2) Start engine" << std::endl;
 
 	std::string sInput = "";
-	while (sInput != "q")
+	while (sInput != "1")
 	{
 		getline(std::cin, sInput);
+		if (sInput == "2")
+		{
+			std::cout << "Starting Nebula engine..." << std::endl;
+
+			EngineLimits limits;
+			Engine engine(limits);
+			if (!engine.startUp())
+			{
+				std::cout << "Failed start up" << std::endl;
+				continue;
+			}
+			else
+			{
+				std::cout << "Done" << std::endl;
+			}
+
+			engine.run();
+
+			std::cout << "Stopping Nebula engine..." << std::endl;
+			if (!engine.shutDown())
+			{
+				std::cout << "Failed shut down" << std::endl;
+			}
+			else
+			{
+				std::cout << "Done" << std::endl;
+			}
+		}
 	}
 
 	return 0;

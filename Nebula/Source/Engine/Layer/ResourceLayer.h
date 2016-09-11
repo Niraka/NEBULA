@@ -9,14 +9,29 @@ The resource layer.
 #ifndef RESOURCE_LAYER_H
 #define RESOURCE_LAYER_H
 
-class ResourceLayer
+#include "Engine/Layer/Layer.h"
+
+class ResourceLayer :
+	public Layer
 {
 	private:
 
 	protected:
 
 	public:
+		/**
+		Constructs a resource layer. */
 		ResourceLayer();
+
+		/**
+		Starts up the resource layer.
+		@return A layer response indicating the result of the operation */
+		LayerResponses startUp();
+
+		/**
+		Shuts down the resource layer.
+		@return A layer response indicating the result of the operation */
+		LayerResponses shutDown();
 };
 
 #endif

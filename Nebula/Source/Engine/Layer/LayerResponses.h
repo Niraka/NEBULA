@@ -13,12 +13,20 @@ engine layers.
 enum class LayerResponses
 {
 	/** 
-	Initialisation of an engine layer failed. */
-	INITIALISATION_FAILED,
+	Start up procedure of an engine layer failed. */
+	START_UP_FAILED,
 
 	/**
-	Initialisation of an engine layer succeeded. */
-	INITIALISATION_SUCCESS
+	Start up procedure of an engine layer succeeded. */
+	START_UP_SUCCESS,
+	
+	/**
+	Shut down procedure of an engine layer failed. */
+	SHUT_DOWN_FAILED,
+
+	/**
+	Shut down procedure of an engine layer succeeded. */
+	SHUT_DOWN_SUCCESS
 };
 
 #endif

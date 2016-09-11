@@ -9,14 +9,29 @@ The module layer.
 #ifndef MODULE_LAYER_H
 #define MODULE_LAYER_H
 
-class ModuleLayer
+#include "Engine/Layer/Layer.h"
+
+class ModuleLayer :
+	public Layer
 {
 	private:
 
 	protected:
 
 	public:
+		/**
+		Constructs a module layer. */
 		ModuleLayer();
+
+		/**
+		Starts up the module layer.
+		@return A layer response indicating the result of the operation */
+		LayerResponses startUp();
+
+		/**
+		Shuts down the module layer.
+		@return A layer response indicating the result of the operation */
+		LayerResponses shutDown();
 };
 
 #endif
