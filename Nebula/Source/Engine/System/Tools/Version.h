@@ -13,13 +13,16 @@ A version structure provides a convenient method of storing version information.
 
 struct Version
 {
-	/* The major release counter */
+	/**
+	The major release counter. */
 	unsigned int uiMajor;
 
-	/* The minor release counter */
+	/**
+	The minor release counter. */
 	unsigned int uiMinor;
 
-	/* The build counter */
+	/**
+	The build counter. */
 	unsigned int uiBuild;
 
 	/**

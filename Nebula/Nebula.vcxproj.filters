@@ -156,6 +156,21 @@
     <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Array.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedArray.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedArrayEntry.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\TrackedArray.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Id.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Documents\File System Class Diagram.png">

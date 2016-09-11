@@ -14,10 +14,12 @@ Note that the lower bound being less than the upper bound is not enforced.
 template <class NumericType>
 struct Bounds
 {
-	/* The lower bound */
+	/**
+	The lower bound. */
 	NumericType lower;
 
-	/* The upper bound */
+	/**
+	The upper bound. */
 	NumericType upper;
 		
 	/**
