@@ -1,0 +1,36 @@
+Active task:
+========================
+Briefly:
+
+To develop a simple collection of tools that will be used throughout the
+engine.
+
+========================
+Info:
+
+Tools include:
+- Containers
+- Very common structures
+- Conversion and mathematical utilities not provided by external libraries
+- Minor standard extensions
+
+========================
+Notes:
+
+The final list of tools will probably be extended as time goes on. 
+Containers are the most important part.
+
+==========================================================================
+==========================================================================
+==========================================================================
+Planned tasks:
+
+Develop a series of subsystems for the system-layer.
+Subsystems in this phase are:
+- Event
+- File
+- Logging
+- Property
+- Schedule
+- Thread
+- Timer

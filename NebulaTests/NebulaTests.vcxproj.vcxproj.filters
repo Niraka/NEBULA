@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Libraries\GoogleTest\googletest\src\gtest_main.cc">
+      <Filter>Library Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ExampleTests.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{af681c57-df1e-465e-a004-1060f3baa7df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Source">
+      <UniqueIdentifier>{29d4c217-19e7-4d1b-ac80-81425fc306d2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

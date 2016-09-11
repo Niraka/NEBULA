@@ -45,3 +45,15 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Nebula
+*.suo
+*.opendb
+*.db
+Temp/
+Build/
+GoogleTest/
+ft265/
+glew-2.0.0/
+glfw-3.2/
+*.user
