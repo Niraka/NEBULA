@@ -141,6 +141,21 @@
     <ClInclude Include="Source\Engine\Layer\SystemLayer.h">
       <Filter>Source\Engine\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Bounds.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Pair.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Version.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Documents\File System Class Diagram.png">

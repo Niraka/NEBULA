@@ -46,6 +46,11 @@
     <ClInclude Include="Source\Engine\Layer\ModuleLayer.h" />
     <ClInclude Include="Source\Engine\Layer\ResourceLayer.h" />
     <ClInclude Include="Source\Engine\Layer\SystemLayer.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Bounds.h" />
+    <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Pair.h" />
+    <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Documents\Content Layer Class Diagram.png" />
