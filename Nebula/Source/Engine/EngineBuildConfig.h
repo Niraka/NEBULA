@@ -19,6 +19,7 @@ All definitions should prefix with either 'SWITCH' or 'NEB'
 #define SWITCH_CONFIGURATION_DEBUG
 #define SWITCH_NO_LOGGING
 #define SWITCH_NO_STAT_TRACKING
+//#define SWITCH_NO_LAUNCH_MENU
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,12 +33,16 @@ All definitions should prefix with either 'SWITCH' or 'NEB'
 	#ifdef SWITCH_NO_STAT_TRACKING
 		#define NEB_NO_STAT_TRACKING
 	#endif
+	#ifdef SWITCH_NO_LAUNCH_MENU
+		#define NEB_NO_LAUNCH_MENU
+	#endif
 #endif
 
 #ifndef SWITCH_CONFIGURATION_DEBUG
 	#define NEB_CONFIG_RELEASE
 	#define NEB_NO_LOGGING
 	#define NEB_NO_STAT_TRACKING
+	#define NEB_NO_LAUNCH_MENU
 #endif
 
 #endif

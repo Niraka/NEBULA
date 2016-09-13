@@ -16,9 +16,10 @@ The launcher is the entry point to the program.
 
 #include <GLM\glm.hpp>
 
-#include <iostream>
 #include <string>
+#include <iostream>
 
+#include "Engine/EngineBuildConfig.h"
 #include "Engine/EngineLimits.h"
 #include "Engine/Engine.h"
 
@@ -60,6 +61,24 @@ int main()
 	}
 
 	///////////////////////////////////////////////////////////////////////////
+
+	#ifdef NEB_NO_LAUNCH_MENU
+
+	EngineLimits limits;
+	Engine engine(limits);
+	if (engine.startUp())
+	{
+		engine.run();
+		engine.shutDown();
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+	#else 
+	
 	std::cout << "1) Exit program" << std::endl;
 	std::cout << "2) Start engine" << std::endl;
 
@@ -98,4 +117,5 @@ int main()
 	}
 
 	return 0;
+	#endif
 }

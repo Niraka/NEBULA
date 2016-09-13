@@ -50,9 +50,6 @@
     <Filter Include="Source\Engine\System\Event">
       <UniqueIdentifier>{1ba95f95-3b8f-41e8-83ff-f5b1102912d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\System\Timer">
-      <UniqueIdentifier>{2f57f828-4b90-4c13-964c-293d42769aca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\Module\Transform">
       <UniqueIdentifier>{058ed39f-ef7d-437f-914b-20a20227488e}</UniqueIdentifier>
     </Filter>
@@ -85,6 +82,9 @@
     </Filter>
     <Filter Include="Source\Engine\Layer">
       <UniqueIdentifier>{b7315287-4a91-4f8d-84b7-f6cfac23db5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\System\Timer">
+      <UniqueIdentifier>{20809fbf-e5cd-4053-98d3-30e83d02158c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
