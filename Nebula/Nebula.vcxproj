@@ -53,6 +53,10 @@
     <ClInclude Include="Source\Engine\System\Tools\IndexedArrayEntry.h" />
     <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h" />
     <ClInclude Include="Source\Engine\System\Tools\Pair.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Queue.h" />
+    <ClInclude Include="Source\Engine\System\Tools\QueueNode.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Stack.h" />
+    <ClInclude Include="Source\Engine\System\Tools\StackNode.h" />
     <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h" />
     <ClInclude Include="Source\Engine\System\Tools\TrackedArray.h" />
     <ClInclude Include="Source\Engine\System\Tools\Version.h" />

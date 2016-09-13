@@ -171,6 +171,18 @@
     <ClInclude Include="Source\Engine\System\Tools\Id.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Queue.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\QueueNode.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Stack.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\StackNode.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Documents\File System Class Diagram.png">
