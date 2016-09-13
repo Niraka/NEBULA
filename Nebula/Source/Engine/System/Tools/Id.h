@@ -2,7 +2,7 @@
 An id is a binding of an index number and a version number that is used by indexed containers.
 
 An invalid id is defined as an id where the version number equals 0. This is because containers
-that utilise ids will never return a version number of 0.
+that utilise ids will never return a valid id with version number 0.
 
 @date edited 11/09/2016
 @date authored 11/09/2016

@@ -1,10 +1,20 @@
 /**
-An indexed array 
+An indexed array is a fixed size container that specialises in quick insertion and deletion of
+versioned elements.
 
+To summarise, an indexed array uses Id objects that track both the version and index number of
+an inserted element. The index number is used to move directly to the target index rather than
+searching for an element. The version number allows the container to reuse indices whilst still
+being able to determine which elements still exist.
+
+Note that the act of incrementing a version number beyond its maximum type value is both 
+unsupported and undefined at this time.
+
+@see Id
 @see Array
 @see TrackedArray
 
-@date edited 11/09/2016
+@date edited 13/09/2016
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
