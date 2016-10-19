@@ -128,6 +128,7 @@ class IndexedArray
 				if (m_data[iCurrentIndex].bActive)
 				{
 					m_data[iCurrentIndex].bActive = false;
+					m_data[iCurrentIndex].data = ElementType();
 					++m_data[iCurrentIndex].version;
 					--m_iNumElements;
 

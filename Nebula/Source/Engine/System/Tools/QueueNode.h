@@ -1,7 +1,7 @@
 /**
 A queue node for use in a queue container.
 
-@date edited 13/09/2016
+@date edited 12/10/2016
 @date authored 13/09/2016
 
 @author Nathan Sainsbury */
@@ -12,25 +12,22 @@ A queue node for use in a queue container.
 template <class ElementType>
 struct QueueNode
 {
-	private:
-	
-	protected:
+	/**
+	The element. */
+	ElementType data;
 
-	public:
-		/* The element */
-		ElementType data;
+	/**
+	A pointer to the next node in the queue. */
+	QueueNode<ElementType>* next;
 
-		/* A pointer to the next node in the queue */
-		QueueNode<ElementType>* next;
-
-		/**
-		Constructs a queue node with the given element.
-		@param element The element */
-		QueueNode(const ElementType& element)
-		{
-			data = element;
-			next = nullptr;
-		}
+	/**
+	Constructs a queue node with the given element.
+	@param element The element */
+	QueueNode(const ElementType& element)
+	{
+		data = element;
+		next = nullptr;
+	}
 };
 
 #endif

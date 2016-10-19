@@ -118,7 +118,7 @@ class Stack
 		/**
 		Checks whether the stack is not empty.
 		@see isEmpty
-		@return True if the stack contains at least 1 element, false if not */
+		@return True if the stack contains at least 1 element, false if it does not */
 		bool isNotEmpty() const
 		{
 			return m_uiNumElements != 0;

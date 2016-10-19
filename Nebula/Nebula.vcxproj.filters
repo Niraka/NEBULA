@@ -71,9 +71,6 @@
     <Filter Include="Source\Engine\System\Schedule">
       <UniqueIdentifier>{cbc70f0f-e2e3-4062-8ece-10ab5117d795}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\System\Thread">
-      <UniqueIdentifier>{0765d40d-e6e9-4c3d-99fc-35824b2e985b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\Resource">
       <UniqueIdentifier>{b3e0b6e3-426a-420b-af83-2d45d0a9123e}</UniqueIdentifier>
     </Filter>
@@ -85,6 +82,9 @@
     </Filter>
     <Filter Include="Source\Engine\System\Timer">
       <UniqueIdentifier>{20809fbf-e5cd-4053-98d3-30e83d02158c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\System\Thread">
+      <UniqueIdentifier>{9cd14347-cfea-47a7-bbbe-4375038baf59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +181,21 @@
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\StackNode.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Vector.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedVectorEntry.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\CyclicArray.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\CyclicVector.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
   </ItemGroup>

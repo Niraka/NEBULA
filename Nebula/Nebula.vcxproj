@@ -48,9 +48,12 @@
     <ClInclude Include="Source\Engine\Layer\SystemLayer.h" />
     <ClInclude Include="Source\Engine\System\Tools\Array.h" />
     <ClInclude Include="Source\Engine\System\Tools\Bounds.h" />
+    <ClInclude Include="Source\Engine\System\Tools\CyclicArray.h" />
+    <ClInclude Include="Source\Engine\System\Tools\CyclicVector.h" />
     <ClInclude Include="Source\Engine\System\Tools\Id.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedArray.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedArrayEntry.h" />
+    <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h" />
     <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h" />
     <ClInclude Include="Source\Engine\System\Tools\Pair.h" />
     <ClInclude Include="Source\Engine\System\Tools\Queue.h" />
@@ -59,6 +62,8 @@
     <ClInclude Include="Source\Engine\System\Tools\StackNode.h" />
     <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h" />
     <ClInclude Include="Source\Engine\System\Tools\TrackedArray.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Vector.h" />
+    <ClInclude Include="Source\Engine\System\Tools\IndexedVectorEntry.h" />
     <ClInclude Include="Source\Engine\System\Tools\Version.h" />
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,7 @@ class Array
 		}
 
 		/**
-		Resets the container. All elements are removed. */
+		Resets the container. All elements are reinitialised. */
 		void reset()
 		{
 			IndexType iCurrentIndex = 0;

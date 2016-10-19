@@ -1,7 +1,7 @@
 /**
 A stack node for use in a stack container.
 
-@date edited 13/09/2016
+@date edited 12/10/2016
 @date authored 13/09/2016
 
 @author Nathan Sainsbury */
@@ -12,25 +12,22 @@ A stack node for use in a stack container.
 template <class ElementType>
 struct StackNode
 {
-	private:
+	/**
+	The element. */
+	ElementType data;
 
-	protected:
+	/**
+	A pointer to the next node in the stack. */
+	StackNode<ElementType>* next;
 
-	public:
-		/* The element */
-		ElementType data;
-
-		/* A pointer to the next node in the stack */
-		StackNode<ElementType>* next;
-
-		/**
-		Constructs a stack node with the given element. 
-		@param element The element */
-		StackNode(const ElementType& element)
-		{
-			data = element;
-			next = nullptr;
-		}
+	/**
+	Constructs a stack node with the given element. 
+	@param element The element */
+	StackNode(const ElementType& element)
+	{
+		data = element;
+		next = nullptr;
+	}
 };
 
 #endif
