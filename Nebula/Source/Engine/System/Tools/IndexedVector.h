@@ -311,7 +311,7 @@ class IndexedVector
 		@see tryToGet */
 		ElementType& get(const Id<IdType>& id)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (id.index >= m_iMaxElements)
 			{
 				fatalexit("Attempting to access non-existant index in indexed vector");
@@ -329,7 +329,7 @@ class IndexedVector
 		@see get */
 		ElementType* tryToGet(const Id<IdType>& id)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (id.index >= m_iMaxElements)
 			{
 				fatalexit("Attempting to access non-existant index in indexed vector");

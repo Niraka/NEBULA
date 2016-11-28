@@ -4,27 +4,38 @@ Engine::Engine()
 {
 }
 
+Engine::Engine(const Engine& other)
+{
+}
+
+Engine& Engine::operator=(const Engine& other)
+{
+	return *this;
+}
+
 Engine::Engine(const EngineLimits& limits)
 {
+	m_limits = limits;
+}
+
+Engine::~Engine()
+{
+	shutDown();	
 }
 
 bool Engine::startUp()
 {
-	if (m_systemLayer.startUp() == LayerResponses::START_UP_FAILED)
+	m_layers.push(new SystemLayer());
+	m_layers.push(new ResourceLayer());
+	m_layers.push(new ModuleLayer());
+	m_layers.push(new ContentLayer());
+
+	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
 	{
-		return false;
-	}
-	if (m_resourceLayer.startUp() == LayerResponses::START_UP_FAILED)
-	{
-		return false;
-	}
-	if (m_moduleLayer.startUp() == LayerResponses::START_UP_FAILED)
-	{
-		return false;
-	}
-	if (m_contentLayer.startUp() == LayerResponses::START_UP_FAILED)
-	{
-		return false;
+		if (m_layers.get(ui)->startUp() == LayerResponses::START_UP_FAILED)
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -32,22 +43,19 @@ bool Engine::startUp()
 
 bool Engine::shutDown()
 {
-	if (m_systemLayer.shutDown() == LayerResponses::SHUT_DOWN_FAILED)
+	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
 	{
-		return false;
+		if (m_layers.get(ui)->shutDown() == LayerResponses::SHUT_DOWN_FAILED)
+		{
+			return false;
+		}
 	}
-	if (m_resourceLayer.shutDown() == LayerResponses::SHUT_DOWN_FAILED)
+	
+	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
 	{
-		return false;
+		delete m_layers.get(ui);
 	}
-	if (m_moduleLayer.shutDown() == LayerResponses::SHUT_DOWN_FAILED)
-	{
-		return false;
-	}
-	if (m_contentLayer.shutDown() == LayerResponses::SHUT_DOWN_FAILED)
-	{
-		return false;
-	}
+	m_layers.clear();
 
 	return true;
 }

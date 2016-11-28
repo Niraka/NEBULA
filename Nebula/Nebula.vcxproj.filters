@@ -112,6 +112,9 @@
     <ClCompile Include="Source\Engine\Layer\SystemLayer.cpp">
       <Filter>Source\Engine\Layer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Engine.h">
@@ -196,6 +199,33 @@
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\CyclicVector.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Set.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\RBTree.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeNode.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeNodeColours.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\Map.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\MapKeyComparator.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeElementBuilder.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\MapElementBuilder.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\DirectoryListing.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
   </ItemGroup>

@@ -307,7 +307,7 @@ class CyclicVector
 		@see tryToGet */
 		ElementType& get(IndexType iIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iIndex > m_iNumElements)
 			{
 				fatalexit("Attempting to access non-existant index in vector");
@@ -325,7 +325,7 @@ class CyclicVector
 		@return The number of elements removed */
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -357,7 +357,7 @@ class CyclicVector
 		@return The number of elements removed */
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -525,7 +525,7 @@ class CyclicVector
 		IndexType replaceRange(const ElementType& first, const ElementType& second,
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -576,7 +576,7 @@ class CyclicVector
 		@param iEndIndex The end index (exclusive) */
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return;

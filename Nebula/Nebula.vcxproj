@@ -34,6 +34,7 @@
     <ClCompile Include="Source\Engine\Layer\ModuleLayer.cpp" />
     <ClCompile Include="Source\Engine\Layer\ResourceLayer.cpp" />
     <ClCompile Include="Source\Engine\Layer\SystemLayer.cpp" />
+    <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp" />
     <ClCompile Include="Source\Launch\Launcher.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,18 +51,27 @@
     <ClInclude Include="Source\Engine\System\Tools\Bounds.h" />
     <ClInclude Include="Source\Engine\System\Tools\CyclicArray.h" />
     <ClInclude Include="Source\Engine\System\Tools\CyclicVector.h" />
+    <ClInclude Include="Source\Engine\System\Tools\DirectoryListing.h" />
     <ClInclude Include="Source\Engine\System\Tools\Id.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedArray.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedArrayEntry.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h" />
     <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Map.h" />
+    <ClInclude Include="Source\Engine\System\Tools\MapElementBuilder.h" />
+    <ClInclude Include="Source\Engine\System\Tools\MapKeyComparator.h" />
     <ClInclude Include="Source\Engine\System\Tools\Pair.h" />
     <ClInclude Include="Source\Engine\System\Tools\Queue.h" />
     <ClInclude Include="Source\Engine\System\Tools\QueueNode.h" />
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeElementBuilder.h" />
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeNodeColours.h" />
+    <ClInclude Include="Source\Engine\System\Tools\RBTree.h" />
+    <ClInclude Include="Source\Engine\System\Tools\Set.h" />
     <ClInclude Include="Source\Engine\System\Tools\Stack.h" />
     <ClInclude Include="Source\Engine\System\Tools\StackNode.h" />
     <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h" />
     <ClInclude Include="Source\Engine\System\Tools\TrackedArray.h" />
+    <ClInclude Include="Source\Engine\System\Tools\RBTreeNode.h" />
     <ClInclude Include="Source\Engine\System\Tools\Vector.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedVectorEntry.h" />
     <ClInclude Include="Source\Engine\System\Tools\Version.h" />

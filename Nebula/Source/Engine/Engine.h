@@ -1,7 +1,7 @@
 /**
 The engine.
 
-@date edited 10/09/2016
+@date edited 28/11/2016
 @date authored 10/09/2016
 
 @author Nathan Sainsbury */
@@ -9,6 +9,8 @@ The engine.
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "Engine/System/Tools/Vector.h"
+#include "Engine/Layer/Layer.h"
 #include "Engine/Layer/SystemLayer.h"
 #include "Engine/Layer/ResourceLayer.h"
 #include "Engine/Layer/ModuleLayer.h"
@@ -18,14 +20,20 @@ The engine.
 class Engine
 {
 	private:
-		SystemLayer m_systemLayer;
-		ResourceLayer m_resourceLayer;
-		ModuleLayer m_moduleLayer;
-		ContentLayer m_contentLayer;
+		Vector<Layer*> m_layers;
+		EngineLimits m_limits;
 
 		/**
-		Forbidden. */
+		Forbidden. Engine limits should always be given. */
 		Engine();
+
+		/**
+		Forbidden. No reason to copy an entire engine. */
+		Engine(const Engine& other);
+
+		/**
+		Forbidden. No reason to assign an entire engine. */
+		Engine& operator=(const Engine& other);
 
 	protected:
 
@@ -34,6 +42,10 @@ class Engine
 		Constructs an engine with the given limits.
 		@param limits The desired limits */
 		Engine(const EngineLimits& limits);
+
+		/**
+		Destructor. */
+		~Engine();
 
 		/**
 		Starts up the engine. 

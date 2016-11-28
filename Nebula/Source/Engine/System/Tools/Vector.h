@@ -15,7 +15,7 @@ A standard vector.
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 
-template <class ElementType, class IndexType>
+template <class ElementType, class IndexType = unsigned int>
 class Vector
 {
 	private:
@@ -225,12 +225,12 @@ class Vector
 		@see tryToGet */
 		ElementType& get(IndexType iIndex)
 		{
-			//#ifndef NEB_NO_CONTAINER_CHECKS
-			//if (iIndex >= m_iNumElements)
-			//{
-			//	fatalexit("Attempting to access non-existant index in vector");
-			//}
-			//#endif
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iNumElements)
+			{
+				fatalexit("Attempting to access non-existant index in vector");
+			}
+			#endif
 
 			return m_pData[iIndex];
 		}
@@ -243,7 +243,7 @@ class Vector
 		@return The number of elements removed */
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -274,7 +274,7 @@ class Vector
 		@return The number of elements removed */
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -443,7 +443,7 @@ class Vector
 		IndexType replaceRange(const ElementType& first, const ElementType& second,
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return 0;
@@ -494,7 +494,7 @@ class Vector
 		@param iEndIndex The end index (exclusive) */
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
-			#ifndef NEB_NO_CONTAINER_CHECKS
+			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iStartIndex > iEndIndex)
 			{
 				return;
