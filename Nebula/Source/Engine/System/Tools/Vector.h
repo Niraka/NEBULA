@@ -4,7 +4,7 @@ A standard vector.
 @see IndexedVector
 @see CyclicVector
 
-@date edited 25/09/2016
+@date edited 05/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -13,6 +13,8 @@ A standard vector.
 #define VECTOR_H
 
 #include "Engine/EngineBuildConfig.h"
+#include "Engine/System/Tools/VectorIterator.h"
+#include "Engine/System/Tools/VectorConstIterator.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IndexType = unsigned int>
@@ -27,6 +29,9 @@ class Vector
 	protected:
 
 	public:
+		typedef VectorIterator<ElementType> Iterator;
+		typedef VectorConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructs a vector of size 5. */
 		Vector()
@@ -535,25 +540,6 @@ class Vector
 		}
 
 		/**
-		Counts the number of times the given element exists within the container.
-		@param element The element to search for
-		@return The number of occurences */
-		IndexType count(const ElementType& element) const
-		{
-			IndexType iCount = 0;
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
-			{
-				if (m_pData[iCurrentIndex] == element)
-				{
-					++iCount;
-				}
-			}
-
-			return iCount;
-		}
-
-		/**
 		Retrieves the current number of elements.
 		@return The current number of elements */
 		IndexType numElements() const
@@ -567,6 +553,43 @@ class Vector
 		IndexType maxElements() const
 		{
 			return m_iMaxElements;
+		}
+
+		/**
+		Creates an iterator targetting the first element. When the vector is empty this iterator is
+		equal to the iterator created via a call to end().
+		@return An iterator targetting the first element in the vector
+		@see end */
+		Iterator begin()
+		{
+			return Iterator(&m_pData[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		vector.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_pData[m_iNumElements]);
+		}
+		
+		/**
+		Creates a const iterator targetting the first element. When the vector is empty this 
+		iterator is equal to the iterator created via a call to cend().
+		@return A const iterator targetting the first element in the vector */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_pData[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in 
+		the vector.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_pData[m_iNumElements]);
 		}
 };
 

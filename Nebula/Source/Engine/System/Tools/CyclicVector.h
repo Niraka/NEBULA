@@ -7,7 +7,7 @@ retrieve a particular element via a parameter-less call to get().
 @see Vector
 @see IndexedVector
 
-@date edited 18/10/2016
+@date edited 05/01/2017
 @date authored 18/10/2016
 
 @author Nathan Sainsbury */
@@ -16,9 +16,11 @@ retrieve a particular element via a parameter-less call to get().
 #define CYCLIC_VECTOR_H
 
 #include "Engine/EngineBuildConfig.h"
+#include "Engine/System/Tools/CyclicVectorIterator.h"
+#include "Engine/System/Tools/CyclicVectorConstIterator.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 
-template <class ElementType, class IndexType>
+template <class ElementType, class IndexType = unsigned int>
 class CyclicVector
 {
 	private:
@@ -48,6 +50,9 @@ class CyclicVector
 	protected:
 
 	public:
+		typedef CyclicVectorIterator<ElementType> Iterator;
+		typedef CyclicVectorConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructs a vector of size 5. */
 		CyclicVector()
@@ -649,6 +654,43 @@ class CyclicVector
 		IndexType maxElements() const
 		{
 			return m_iMaxElements;
+		}		
+		
+		/**
+		Creates an iterator targetting the first element. When the array is empty this iterator is 
+		equal to the iterator created via a call to end().
+		@return An iterator targetting the first element in the array
+		@see end */
+		Iterator begin()
+		{
+			return Iterator(&m_pData[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		array.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_pData[m_iMaxElements]);
+		}
+
+		/**
+		Creates a const iterator targetting the first element. When the vector is empty this
+		iterator is equal to the iterator created via a call to cend().
+		@return A const iterator targetting the first element in the vector */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_pData[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the array.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_pData[m_iMaxElements]);
 		}
 };
 

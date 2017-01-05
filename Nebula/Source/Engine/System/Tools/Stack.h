@@ -1,10 +1,6 @@
 /**
 A standard stack container.
 
-Concurrent versions are available.
-
-@see ConcurrentStack
-
 @date edited 13/09/2016
 @date authored 13/09/2016
 

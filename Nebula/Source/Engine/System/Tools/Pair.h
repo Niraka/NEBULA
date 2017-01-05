@@ -1,7 +1,11 @@
 /**
 A standard pair.
 
-@date edited 25/11/2016
+@todo
+Add convertible type template constructors similar to std::pair to allow for Pair<int, int> to 
+construct from Pair<float, float> (etc, etc).
+
+@date edited 05/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -9,7 +13,9 @@ A standard pair.
 #ifndef PAIR_H
 #define PAIR_H
 
-template <class Type1, class Type2>
+#include <type_traits>
+
+template <class Type1, class Type2 = Type1>
 struct Pair
 {
 	/**
@@ -21,8 +27,10 @@ struct Pair
 	Type2 second;
 
 	/**
-	Constructs a pair with uninitialised elements. */
-	Pair()
+	Constructs a pair with default initialised elements. */
+	Pair() :
+		first(Type1()),
+		second(Type2())
 	{
 	}
 
@@ -34,7 +42,7 @@ struct Pair
 		first(first), 
 		second(second)
 	{
-	}
+	}	
 
 	/**
 	Copy-constructs a pair with the given values.

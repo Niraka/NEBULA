@@ -1,7 +1,7 @@
 /**
 A standard map.
 
-@date edited 24/11/2016
+@date edited 05/01/2017
 @date authored 10/11/2016
 
 @author Nathan Sainsbury */
@@ -20,17 +20,21 @@ template <class KeyType,
 class Map
 {
 	private:
-		RBTree<Pair<const KeyType, ValueType>,
-			const KeyType, 
+		typedef RBTree<Pair<const KeyType, ValueType>,
+			const KeyType,
 			MapKeyComparator<const KeyType,
 				ValueType,
 				Comparator>,
 			MapElementBuilder<const KeyType,
-				ValueType>> m_tree;
+				ValueType>> Tree;
+		Tree m_tree;
 
 	protected:
 
 	public:
+		typedef typename Tree::Iterator Iterator;
+		typedef typename Tree::ConstIterator ConstIterator;
+
 		/**
 		Constructs an empty map. */
 		Map()
@@ -138,7 +142,7 @@ class Map
 		@see remove */
 		bool insert(const KeyType& key)
 		{
-			return m_tree.insert(Pair<KeyType, ValueType>(key, ValueType()));
+			return m_tree.insert(Pair<const KeyType, ValueType>(key, ValueType()));
 		}
 
 		/**
@@ -151,7 +155,8 @@ class Map
 		@see remove */
 		bool insert(const KeyType& key, const ValueType& value)
 		{
-			return m_tree.insert(Pair<const KeyType, ValueType>(key, value));
+			Pair<const KeyType, ValueType> p(key, value);
+			return m_tree.insert(p);
 		}
 
 		/**
@@ -185,7 +190,7 @@ class Map
 		@see remove */
 		ValueType* insertAndGet(const KeyType& key, const ValueType& value)
 		{
-			if (m_tree.insert(Pair<KeyType, ValueType>(key, value)))
+			if (m_tree.insert(Pair<const KeyType, ValueType>(key, value)))
 			{
 				return &m_tree.get(key);
 			}
@@ -203,7 +208,44 @@ class Map
 		bool remove(const KeyType& key)
 		{
 			return m_tree.remove(key);
-		}		
+		}
+
+		/**
+		Creates an iterator targetting the first element. When the vector is empty this iterator is
+		equal to the iterator created via a call to end().
+		@return An iterator targetting the first element in the vector
+		@see end */
+		Iterator begin()
+		{
+			return m_tree.begin();
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		vector.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return m_tree.end();
+		}
+
+		/**
+		Creates a const iterator targetting the first element. When the vector is empty this
+		iterator is equal to the iterator created via a call to cend().
+		@return A const iterator targetting the first element in the vector */
+		ConstIterator cbegin()
+		{
+			return m_tree.cbegin();
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the vector.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return m_tree.cend();
+		}
 };
 
 #endif

@@ -1,7 +1,7 @@
 /**
 A standard set.
 
-@date edited 15/11/2016
+@date edited 05/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -16,11 +16,15 @@ template <class ElementType, class Comparator = std::less<ElementType>>
 class Set
 {
 	private:
-		RBTree<ElementType, ElementType, Comparator> m_tree;
+		typedef RBTree<ElementType, ElementType, Comparator> Tree;
+		Tree m_tree;
 
 	protected:
 
 	public:
+		typedef typename Tree::Iterator Iterator;
+		typedef typename Tree::ConstIterator ConstIterator;
+
 		/**
 		Constructs an empty set. */
 		Set()
@@ -150,6 +154,43 @@ class Set
 		bool remove(const ElementType& element)
 		{
 			return m_tree.remove(element);
+		}
+
+		/**
+		Creates an iterator targetting the first element. When the vector is empty this iterator is
+		equal to the iterator created via a call to end().
+		@return An iterator targetting the first element in the vector
+		@see end */
+		Iterator begin()
+		{
+			return m_tree.begin();
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		vector.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return m_tree.end();
+		}
+
+		/**
+		Creates a const iterator targetting the first element. When the vector is empty this
+		iterator is equal to the iterator created via a call to cend().
+		@return A const iterator targetting the first element in the vector */
+		ConstIterator cbegin()
+		{
+			return m_tree.cbegin();
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the vector.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return m_tree.cend();
 		}
 };
 

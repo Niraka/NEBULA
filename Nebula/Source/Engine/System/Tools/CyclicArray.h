@@ -8,7 +8,7 @@ retrieve a particular element via a parameter-less call to get().
 @see TrackedArray
 @see IndexedArray
 
-@date edited 18/10/2016
+@date edited 05/01/2017
 @date authored 12/10/2016
 
 @author Nathan Sainsbury */
@@ -17,6 +17,8 @@ retrieve a particular element via a parameter-less call to get().
 #define CYCLIC_ARRAY_H
 
 #include "Engine/System/Tools/Pair.h"
+#include "Engine/System/Tools/CyclicArrayIterator.h"
+#include "Engine/System/Tools/CyclicArrayConstIterator.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IndexType, IndexType m_iMaxElements>
@@ -64,6 +66,9 @@ class CyclicArray
 	protected:
 
 	public:
+		typedef CyclicArrayIterator<ElementType> Iterator;
+		typedef CyclicArrayConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructor. */
 		CyclicArray()
@@ -148,7 +153,7 @@ class CyclicArray
 		}
 
 		/**
-		Retrieves the active index. For empty containers this will be equal to 0. 
+		Retrieves the active index. For empty containers this will be equal to 0.
 		@return The active index */
 		IndexType getActiveIndex() const
 		{
@@ -213,8 +218,7 @@ class CyclicArray
 					validateActiveIndex();
 					return true;
 				}
-			}
-			while (iCurrentIndex != 0);
+			} while (iCurrentIndex != 0);
 
 			return false;
 		}
@@ -239,8 +243,7 @@ class CyclicArray
 					validateActiveIndex();
 					return true;
 				}
-			} 
-			while (iCurrentIndex != 0);
+			} while (iCurrentIndex != 0);
 
 			return false;
 		}
@@ -682,6 +685,40 @@ class CyclicArray
 		bool isFull() const
 		{
 			return m_iNumElements == m_iMaxElements;
+		}
+
+		/**
+		Creates an iterator targetting the first element in the array.
+		@return An iterator targetting the first element in the array */
+		Iterator begin()
+		{
+			return Iterator(&m_data[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		array.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_data[m_iMaxElements]);
+		}
+
+		/**
+		Creates a const iterator targetting the first element in the array.
+		@return A const iterator targetting the first element in the array */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_data[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the array.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_data[m_iMaxElements]);
 		}
 };
 

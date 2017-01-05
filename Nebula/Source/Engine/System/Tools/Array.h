@@ -4,10 +4,16 @@ An array of fixed size.
 @see TrackedArray
 @see IndexedArray
 
+@date edited 05/01/2017
+@date authored 05/10/2016
+
 @author Nathan Sainsbury */
 
 #ifndef ARRAY_H
 #define ARRAY_H
+
+#include "Engine/System/Tools/ArrayIterator.h"
+#include "Engine/System/Tools/ArrayConstIterator.h"
 
 template <class ElementType, class IndexType, IndexType m_iMaxElements>
 class Array
@@ -18,6 +24,9 @@ class Array
 	protected:
 
 	public:
+		typedef ArrayIterator<ElementType> Iterator;
+		typedef ArrayConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructor. */
 		Array()
@@ -257,6 +266,40 @@ class Array
 		IndexType maxElements() const
 		{
 			return m_iMaxElements;
+		}
+		
+		/**
+		Creates an iterator targetting the first element in the array.
+		@return An iterator targetting the first element in the array */
+		Iterator begin()
+		{
+			return Iterator(&m_data[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		array.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_data[m_iMaxElements]);
+		}
+
+		/**
+		Creates a const iterator targetting the first element in the array.
+		@return A const iterator targetting the first element in the array */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_data[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the array.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_data[m_iMaxElements]);
 		}
 };
 

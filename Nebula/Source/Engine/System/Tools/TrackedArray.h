@@ -6,8 +6,9 @@ current number of elements is also tracked for convenience.
 
 @see Array
 @see IndexedArray
+@see CyclicArray
 
-@date edited 11/09/2016
+@date edited 05/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -17,6 +18,8 @@ current number of elements is also tracked for convenience.
 
 #include "Engine/System/Tools/Pair.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/System/Tools/TrackedArrayIterator.h"
+#include "Engine/System/Tools/TrackedArrayConstIterator.h"
 
 template <class ElementType, class IndexType, IndexType m_iMaxElements>
 class TrackedArray
@@ -28,6 +31,9 @@ class TrackedArray
 	protected:
 
 	public:
+		typedef TrackedArrayIterator<ElementType> Iterator;
+		typedef TrackedArrayConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructor. */
 		TrackedArray()
@@ -552,6 +558,40 @@ class TrackedArray
 		bool isFull() const
 		{
 			return m_iNumElements == m_iMaxElements;
+		}
+
+		/**
+		Creates an iterator targetting the first element in the array.
+		@return An iterator targetting the first element in the array */
+		Iterator begin()
+		{
+			return Iterator(&m_data[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		array.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_data[m_iMaxElements]);
+		}
+
+		/**
+		Creates a const iterator targetting the first element in the array.
+		@return A const iterator targetting the first element in the array */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_data[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the array.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_data[m_iMaxElements]);
 		}
 };
 

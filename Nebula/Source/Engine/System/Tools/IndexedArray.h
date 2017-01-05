@@ -14,7 +14,7 @@ unsupported and undefined at this time.
 @see Array
 @see TrackedArray
 
-@date edited 13/09/2016
+@date edited 05/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -24,6 +24,8 @@ unsupported and undefined at this time.
 
 #include "Engine/System/Tools/Id.h"
 #include "Engine/System/Tools/IndexedArrayEntry.h"
+#include "Engine/System/Tools/IndexedArrayIterator.h"
+#include "Engine/System/Tools/IndexedArrayConstIterator.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IdType, IdType m_iMaxElements>
@@ -36,6 +38,9 @@ class IndexedArray
 	protected:
 
 	public:
+		typedef IndexedArrayIterator<ElementType, IdType> Iterator;
+		typedef IndexedArrayConstIterator<ElementType, IdType> ConstIterator;
+
 		/**
 		Constructor. */
 		IndexedArray()
@@ -546,6 +551,40 @@ class IndexedArray
 		bool isFull() const
 		{
 			return m_iNumElements == m_iMaxElements;
+		}
+
+		/**
+		Creates an iterator targetting the first element in the array.
+		@return An iterator targetting the first element in the array */
+		Iterator begin()
+		{
+			return Iterator(&m_data[0]);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		array.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(&m_data[m_iMaxElements]);
+		}
+
+		/**
+		Creates a const iterator targetting the first element in the array.
+		@return A const iterator targetting the first element in the array */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(&m_data[0]);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the array.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(&m_data[m_iMaxElements]);
 		}
 };
 

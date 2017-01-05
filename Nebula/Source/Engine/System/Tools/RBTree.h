@@ -4,7 +4,7 @@ A red-black tree.
 The tree possesses a single element cache that is populated by the last accessed/modified element
 so that consecutive uses of a single element are quicker.
 
-@date edited 24/11/2016
+@date edited 05/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -17,6 +17,8 @@ so that consecutive uses of a single element are quicker.
 #include "Engine/System/Tools/RBTreeNode.h"
 #include "Engine/System/Tools/RBTreeElementBuilder.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/System/Tools/RBTreeIterator.h"
+#include "Engine/System/Tools/RBTreeConstIterator.h"
 
 template <class ElementType,
 	class KeyType = ElementType, 
@@ -28,6 +30,7 @@ class RBTree
 		RBTreeNode<ElementType>* m_pRootNode;
 		RBTreeNode<ElementType>* m_pHeadNode;
 		RBTreeNode<ElementType>* m_pCachedElement;
+		RBTreeNode<ElementType>* m_pLeftMost;
 		unsigned int m_uiNumElements;
 		unsigned int m_uiMaxElements;
 		Comparator m_comparator;
@@ -40,14 +43,16 @@ class RBTree
 		{
 			if (isnullptr(m_pHeadNode))
 			{
-				// Children and parent of head node do not matter. It is only used to avoid 
-				// a nullptr check on the parent
+				// Parent of head node does not matter
+				// Both children must point to root node (used by iterators)
+				// Must be flagged as a leaf
+				// Must always be black
 				m_pHeadNode = new RBTreeNode<ElementType>();
-				m_pHeadNode->pLeftChild = nullptr;
-				m_pHeadNode->pRightChild = nullptr;
+				m_pHeadNode->pLeftChild = m_pRootNode;
+				m_pHeadNode->pRightChild = m_pRootNode;
 				m_pHeadNode->pParent = nullptr;
 				m_pHeadNode->colour = RBTreeNodeColours::BLACK;
-				m_pHeadNode->bIsLeaf = false;
+				m_pHeadNode->bIsLeaf = true;
 			}
 
 			if (notnullptr(m_pRootNode))
@@ -174,6 +179,7 @@ class RBTree
 				
 				++m_uiNumElements;
 				m_pCachedElement = m_pRootNode;
+				m_pLeftMost = m_pRootNode;
 				return true;
 			}
 			else if (notnullptr(m_pCachedElement) &&
@@ -206,8 +212,13 @@ class RBTree
 						}
 						else
 						{
-							pChildNode = pParentNode->pLeftChild;
 							addChildNodeLeft(pParentNode, element);
+							pChildNode = pParentNode->pLeftChild;
+
+							if (pParentNode == m_pLeftMost)
+							{
+								m_pLeftMost = pParentNode->pLeftChild;
+							}
 
 							++m_uiNumElements;
 							break;
@@ -222,8 +233,8 @@ class RBTree
 						}
 						else
 						{
-							pChildNode = pParentNode->pRightChild;
 							addChildNodeRight(pParentNode, element);
+							pChildNode = pParentNode->pRightChild;
 
 							++m_uiNumElements;
 							break;
@@ -426,6 +437,18 @@ class RBTree
 				else
 				{
 					pFixNodeParent->pRightChild = pFixNode;
+				}
+
+				if (m_pLeftMost == pErasedNode)
+				{
+					if (pFixNode->bIsLeaf)
+					{
+						m_pLeftMost = pFixNodeParent;
+					}
+					else
+					{
+						m_pLeftMost = min(pFixNode);
+					}
 				}
 
 				// Delete the dead leaf node
@@ -681,6 +704,9 @@ class RBTree
 	protected:
 
 	public:
+		typedef RBTreeIterator<ElementType> Iterator;
+		typedef RBTreeConstIterator<ElementType> ConstIterator;
+
 		/**
 		Constructs a red-black tree. */
 		RBTree()
@@ -691,6 +717,7 @@ class RBTree
 			m_pRootNode = nullptr;
 			m_pHeadNode = nullptr;
 			m_pCachedElement = nullptr;
+			m_pLeftMost = nullptr;
 		}
 
 		/**
@@ -709,12 +736,14 @@ class RBTree
 				m_pRootNode = nullptr;
 				m_pHeadNode = nullptr;
 				m_pCachedElement = nullptr;
+				m_pLeftMost = nullptr;
 			}
 			else
 			{
 				m_pRootNode = copySubtree(other.m_pRootNode);
 				buildAndOrBindHead();
 				m_pCachedElement = m_pRootNode;
+				m_pLeftMost = min(m_pRootNode);
 			}
 		}
 
@@ -736,12 +765,14 @@ class RBTree
 				m_pRootNode = nullptr;
 				m_pHeadNode = nullptr;
 				m_pCachedElement = nullptr;
+				m_pLeftMost = nullptr;
 			}
 			else
 			{
 				m_pRootNode = copySubtree(other.m_pRootNode);
 				buildAndOrBindHead();
 				m_pCachedElement = m_pRootNode;
+				m_pLeftMost = min(m_pRootNode);
 			}
 
 			return *this;
@@ -764,6 +795,7 @@ class RBTree
 
 			m_uiNumElements = 0;
 			m_pCachedElement = nullptr;
+			m_pLeftMost = nullptr;
 		}
 
 		/**
@@ -775,6 +807,7 @@ class RBTree
 
 			m_uiNumElements = 0;
 			m_pCachedElement = nullptr;
+			m_pLeftMost = nullptr;
 		}
 
 		/**
@@ -987,6 +1020,43 @@ class RBTree
 			{
 				return performRemoval(key);
 			}
+		}
+
+		/**
+		Creates an iterator targetting the first element. When the vector is empty this iterator is
+		equal to the iterator created via a call to end().
+		@return An iterator targetting the first element in the vector
+		@see end */
+		Iterator begin()
+		{
+			return Iterator(m_pLeftMost);
+		}
+
+		/**
+		Creates an iterator targetting the theoretical element one past the last element in the
+		vector.
+		@return An iterator targetting the theoretical element one past the last element */
+		Iterator end()
+		{
+			return Iterator(m_pHeadNode);
+		}
+
+		/**
+		Creates a const iterator targetting the first element. When the vector is empty this
+		iterator is equal to the iterator created via a call to cend().
+		@return A const iterator targetting the first element in the vector */
+		ConstIterator cbegin()
+		{
+			return ConstIterator(m_pLeftMost);
+		}
+
+		/**
+		Creates a const iterator targetting the theoretical element one past the last element in
+		the vector.
+		@return A const iterator targetting the theoretical element one past the last element */
+		ConstIterator cend()
+		{
+			return ConstIterator(m_pHeadNode);
 		}
 };
 

@@ -1,11 +1,7 @@
 /**
 A standard queue container.
 
-Concurrent versions are available.
-
-@see ConcurrentQueue
-
-@date edited 13/09/2016
+@date edited 05/01/2017
 @date authored 13/09/2016
 
 @author Nathan Sainsbury */
