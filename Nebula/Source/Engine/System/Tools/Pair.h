@@ -5,7 +5,7 @@ A standard pair.
 Add convertible type template constructors similar to std::pair to allow for Pair<int, int> to 
 construct from Pair<float, float> (etc, etc).
 
-@date edited 05/01/2017
+@date edited 08/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -51,6 +51,24 @@ struct Pair
 		first(pair.first),
 		second(pair.second)
 	{
+	}
+
+	/**
+	Compares this pair with the given pair for equality.
+	@param other The pair to compare with
+	@return True if the pairs are equal, false if they are not */
+	bool operator==(const Pair<Type1, Type2>& other) const
+	{
+		return first == other.first && second == other.second;
+	}
+	
+	/**
+	Compares this pair with the given pair for inequality.
+	@param other The pair to compare with
+	@return True if the pairs are not equal, false if they are */
+	bool operator!=(const Pair<Type1, Type2>& other) const
+	{
+		return !((*this) == other);
 	}
 };
 
