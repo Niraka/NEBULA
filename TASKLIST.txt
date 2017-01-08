@@ -17,16 +17,16 @@ Tools include:
 ========================
 Notes:
 
-The final list of tools will probably be extended as time goes on. 
-Containers are the most important part.
+The final list of tools will probably be extended as time goes on. Containers
+ are the most important part.
 
 ==========================================================================
 ==========================================================================
 ==========================================================================
 Planned tasks:
 
-Develop a series of subsystems for the system-layer.
-Subsystems in this phase are:
+Develop a series of subsystems for the system-layer. Subsystems in this 
+phase are:
 - Event
 - File
 - Logging
@@ -34,3 +34,8 @@ Subsystems in this phase are:
 - Schedule
 - Thread
 - Timer
+
+==========================================================================
+==========================================================================
+==========================================================================
+Completed tasks:

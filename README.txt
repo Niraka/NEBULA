@@ -13,8 +13,8 @@ stages for quite some time. I have finally decided to bring it to life for a few
 - For fun :D
 
 The full feature list (as of the time of writing) is detailed below, but generally speaking this
-engine aims to be a middle of the pack engine that does everything reasonably well without going 
-over the top.
+engine aims to be a middle of the pack engine that explores as many different areas of programming
+as possible. The open-ended design specs are intentional.
 
 =================================================
 FAQ:
@@ -29,26 +29,45 @@ Q. Contributions?
 A. Contributions currently not being accepted as this project is meant as an indicator of my
 own ability. Sorry.
 
-
 ==================================================================================================
 ==================================================================================================
 ==================================================================================================
 Github 
 
-Each GitHub commit will use a prefix to quickly identify the purpose of the commit. Example usage:
+Each GitHub commit will use a prefix and title to quickly identify the purpose of the commit. Example 
+usage:
 [FTR] Implemented concurrent map
 [BUG] Fixed out of bounds array access
+[MUL] Iterator implementation and docs
+
 
 The prefixes are:
-[FTR] For the implementation of a new feature, regardless of size. Feature tags are also used for
-      additions to in-development features.
-[BUG] For fixing a bug
-[MOD] For modification of existing features. Note that a modification differs from a feature because
-      a modification involves a change in a features purpose.
-[DOC] For documentation changes/updates
-[MUL] For a commit that meets more than one criteria. In this case the other prefixes should be added
-      to the commit message.
-[MSC] A catch-all for miscellaneous updates that don't match any other categories
+[FTR] For the implementation of a new feature. Examples include an additional container type, a new
+	  subsystem or a new graphical option. Feature tags do not need to be attached to completed features
+	  but should be used to indicate the first time a new feature exists within the repository
+[BUG] For the fixing of one or more bugs
+[MOD] For modification of existing features. Generally used to address the continued development of an
+	  existing feature
+[DOC] For changes or updates to documentation
+[MUL] For a commit that meets more than one criteria. In this case each prefix should be addressed in
+	  the commit message. An example is given below.
+[RES] For the commitment of a resource file. Such files could include an XML configuration file or a
+      PNG icon.
+[MSC] A catch-all for miscellaneous updates that don't match any other categories. Likely to be very
+      rare
+
+	  	  
+Example commit message using [MUL]:
+
+Title: [MUL] Iterators
+Msg  : [FTR]
+       Added iterators to each of the container types.
+	   
+	   [MOD]
+	   + Red black trees not track the left-most element
+	   
+	   [DOC]
+	   + Added some missing date tags to containers
 
 ==================================================================================================
 ==================================================================================================
@@ -84,9 +103,9 @@ GLFW        : Windowing and input for OpenGL
 FreeType2   : Font rendering
 
 Awaiting approval:
-PhysX       : GPU-based physics from Nvidia
-POCO        : Networking library
-FMOD        : Audio library
+PhysX       : GPU-based physics from Nvidia (Check license)
+POCO        : Networking library (Check license | Check functionality)
+FMOD        : Audio library (Check license)
 
 =================================================
 Layer features
