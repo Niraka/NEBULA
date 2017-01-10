@@ -7,14 +7,12 @@ an inserted element. The index number is used to move directly to the target ind
 searching for an element. The version number allows the container to reuse indices whilst still
 being able to determine which elements still exist.
 
-Note that the act of incrementing a version number beyond its maximum type value is both 
-unsupported and undefined at this time.
-
 @see Id
 @see Array
 @see TrackedArray
+@see CyclicArray
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -22,11 +20,14 @@ unsupported and undefined at this time.
 #ifndef INDEXED_ARRAY_H
 #define INDEXED_ARRAY_H
 
+#include <type_traits>
+
+#include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/Id.h"
 #include "Engine/System/Tools/IndexedArrayEntry.h"
 #include "Engine/System/Tools/IndexedArrayIterator.h"
 #include "Engine/System/Tools/IndexedArrayConstIterator.h"
-#include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IdType, IdType m_iMaxElements>
 class IndexedArray
@@ -55,7 +56,7 @@ class IndexedArray
 		}
 
 		/**
-		Resets the container. All elements are removed and internal version counters are reset. */
+		Resets the container. All elements are reinitialised and internal version counters are reset. */
 		void reset()
 		{
 			IdType iCurrentIndex = 0;
@@ -152,6 +153,15 @@ class IndexedArray
 		@return The elements id */
 		Id<IdType> insert(const ElementType& element, IdType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (!m_data[iIndex].bActive)
 			{
 				m_data[iIndex].bActive = true;
@@ -166,18 +176,58 @@ class IndexedArray
 		/**
 		Retrieves a reference to an element. If the element did not exist, this function invokes
 		undefined behaviour.
-		@param id The id of the element to get 
-		@return A reference to an element 
+		@param id The id of the element to get
+		@return A reference to an element
 		@see tryToGet */
-		ElementType& get(const Id<IdType>& id) 
+		ElementType& operator[](const Id<IdType>& id)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_data[id.index].version == id.version)
 			{
 				return m_data[id.index].data;
 			}
 			else
 			{
-				fatalexit("Attempting to access non-existent indexed array element");
+				fatalexit("Attempting to access non-existent indexed array element. Current version: " +
+					std::to_string(m_data[id.index].version) + ". Attempted version: " +
+					std::to_string(id.version));
+			}
+		}
+
+		/**
+		Retrieves a reference to an element. If the element did not exist, this function invokes
+		undefined behaviour.
+		@param id The id of the element to get 
+		@return A reference to an element 
+		@see tryToGet */
+		ElementType& get(const Id<IdType>& id) 
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
+			if (m_data[id.index].version == id.version)
+			{
+				return m_data[id.index].data;
+			}
+			else
+			{
+				fatalexit("Attempting to access non-existent indexed array element. Current version: " + 
+					std::to_string(m_data[id.index].version) + ". Attempted version: " + 
+					std::to_string(id.version));
 			}
 		}
 
@@ -188,6 +238,15 @@ class IndexedArray
 		@see get */
 		ElementType* tryToGet(const Id<IdType>& id)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_data[id.index].version == id.version)
 			{
 				return &m_data[id.index].data;
@@ -207,6 +266,20 @@ class IndexedArray
 		@return The number of elements removed */
 		IdType removeRange(IdType iStartIndex, IdType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IdType iNumRemoved = 0;
 			IdType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -231,6 +304,20 @@ class IndexedArray
 		@return The number of elements removed */
 		IdType removeRangeAndReset(IdType iStartIndex, IdType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IdType iNumRemoved = 0;
 			IdType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -255,6 +342,15 @@ class IndexedArray
 		@return The number of elements removed, which is at most 1 */
 		IdType remove(const Id<IdType>& id)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_data[id.index].version == id.version)
 			{
 				++m_data[id.index].version;
@@ -272,6 +368,15 @@ class IndexedArray
 		@return The number of elements removed, which is at most 1 */
 		IdType removeAndReset(const Id<IdType>& id)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_data[id.index].version == id.version)
 			{
 				m_data[id.index].data = ElementType();
@@ -285,8 +390,9 @@ class IndexedArray
 		}
 
 		/**
-		Removes the first instance of the given element. Note that the element is only flagged as
-		removed and is not actually removed. Use removeAndReset to actually remove the element.
+		Removes the first element that compares equal to the given element. Note that the element
+		is only flagged as removed and is not actually removed. Use removeAndReset to actually 
+		remove the element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IdType remove(const ElementType& element)
@@ -310,7 +416,7 @@ class IndexedArray
 		}
 
 		/**
-		Removes and resets the first instance of the given element.
+		Removes and resets the first element that compares equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IdType removeAndReset(const ElementType& element)
@@ -335,8 +441,9 @@ class IndexedArray
 		}
 
 		/**
-		Removes all copies of the given element. Note that the element is only flagged as removed
-		and is not actually removed. Use removeAllAndReset to actually remove the element.
+		Removes all elements that compare equal to the given element. Note that the element is only
+		flagged as removed and is not actually removed. Use removeAllAndReset to actually remove 
+		the element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IdType removeAll(const ElementType& element)
@@ -361,7 +468,7 @@ class IndexedArray
 		}
 
 		/**
-		Removes and resets all copies of the given element.
+		Removes and resets all elements that compare equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IdType removeAllAndReset(const ElementType& element)
@@ -437,6 +544,20 @@ class IndexedArray
 		IdType replaceRange(const ElementType& first, const ElementType& second, 
 			IdType iStartIndex, IdType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IdType iNumReplaced = 0;
 			IdType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -460,6 +581,15 @@ class IndexedArray
 		@return True if an element existed, false if it did not */
 		bool exists(const Id<IdType>& id) const
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_data[id.index].version == id.version)
 			{
 				return true;
@@ -471,7 +601,7 @@ class IndexedArray
 		}
 
 		/** 
-		Queries the existence of an element.
+		Queries the existence of an element that compares equal with the given element.
 		@param element The element to search for
 		@return True if the element existed, false if it did not */
 		bool exists(const ElementType& element) const
@@ -492,7 +622,34 @@ class IndexedArray
 		}
 
 		/**
-		Counts the number of times the given element exists within the container.
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if at least 1 equal element existed, false otherwise */
+		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
+		bool exists(const ElementType2* pElement) const
+		{
+			// Function enabled if the element type is not a pointer. Allows the user
+			// to search for a specific element instead of any element that compares
+			// equal.
+
+			IdType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			{
+				if (m_data[iCurrentIndex].bActive)
+				{
+					if (&m_data[iCurrentIndex].data == pElement)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		Counts the number of times an element that compares equal with the given element exists 
+		within the container.
 		@param element The element to search for
 		@return The number of occurences */
 		IdType count(const ElementType& element) const
@@ -556,7 +713,7 @@ class IndexedArray
 		/**
 		Creates an iterator targetting the first element in the array.
 		@return An iterator targetting the first element in the array */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(&m_data[0]);
 		}
@@ -565,7 +722,7 @@ class IndexedArray
 		Creates an iterator targetting the theoretical element one past the last element in the
 		array.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(&m_data[m_iMaxElements]);
 		}
@@ -573,7 +730,7 @@ class IndexedArray
 		/**
 		Creates a const iterator targetting the first element in the array.
 		@return A const iterator targetting the first element in the array */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(&m_data[0]);
 		}
@@ -582,7 +739,7 @@ class IndexedArray
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the array.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(&m_data[m_iMaxElements]);
 		}

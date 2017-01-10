@@ -13,7 +13,7 @@ an incorrect choice of container. Users should prefer id-based functionality.
 @see Vector
 @see CyclicVector
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -21,6 +21,9 @@ an incorrect choice of container. Users should prefer id-based functionality.
 #ifndef INDEXED_VECTOR_H
 #define INDEXED_VECTOR_H
 
+#include <type_traits>
+
+#include "Engine/System/Tools/LanguageExtensions.h"
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/Id.h"
 #include "Engine/System/Tools/IndexedVectorEntry.h"
@@ -290,6 +293,15 @@ class IndexedVector
 		@return The id of the inserted element */
 		Id<IdType> insert(const ElementType& element, IdType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (iIndex < m_iMaxElements)
 			{
 				if (!m_pData[iIndex].bActive)
@@ -319,7 +331,30 @@ class IndexedVector
 			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (id.index >= m_iMaxElements)
 			{
-				fatalexit("Attempting to access non-existant index in indexed vector");
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(id.index));
+			}
+			#endif
+
+			return m_pData[id.index];
+		}
+
+		/**
+		Retrieves a reference to an element with the given id. If the element did not exist, this
+		function invokes undefined behaviour. Note that this function ignores the version component
+		of the id.
+		@param id The id of the element to get
+		@return A reference to an element
+		@see tryToGet */
+		ElementType& operator[](const Id<IdType>& id)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(id.index));
 			}
 			#endif
 
@@ -337,7 +372,9 @@ class IndexedVector
 			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (id.index >= m_iMaxElements)
 			{
-				fatalexit("Attempting to access non-existant index in indexed vector");
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(id.index));
 			}
 			#endif
 
@@ -359,6 +396,15 @@ class IndexedVector
 		@return The number of elements removed, which is at most 1 */
 		IdType remove(IdType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_pData[iIndex].bActive)
 			{
 				m_pData[iIndex].bActive = false;
@@ -397,8 +443,8 @@ class IndexedVector
 		}
 
 		/**
-		Removes all copies of the given element. Note that the elements are not actually removed
-		and are instead just flagged as available space.
+		Removes all elements that compare equal to the given element. Note that the elements are 
+		not actually removed and are instead just flagged as removed.
 		@param element The element to remove
 		@return The number of elements removed 
 		@see removeAllAndReset */
@@ -431,6 +477,15 @@ class IndexedVector
 		@return The number of elements removed, which is at most 1 */
 		IdType removeAndReset(IdType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_pData[iIndex].bActive)
 			{
 				m_pData[iIndex].bActive = false;
@@ -445,7 +500,7 @@ class IndexedVector
 		}
 
 		/**
-		Removes and resets the first instance of the given element.
+		Removes and resets the first element that compares equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IdType removeAndReset(const ElementType& element)
@@ -470,7 +525,7 @@ class IndexedVector
 		}
 
 		/**
-		Removes and resets all copies of the given element.
+		Removes and resets all elements that compare equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IdType removeAllAndReset(const ElementType& element)
@@ -497,7 +552,7 @@ class IndexedVector
 		}
 
 		/**
-		Clears the container. All elements are removed. Version counters are NOT reset.
+		Clears the container. All elements are reinitialised. Version counters are NOT reset.
 		@see reset */
 		void clear()
 		{
@@ -541,6 +596,15 @@ class IndexedVector
 		@return True if an element with the given id existed, false otherwise */
 		bool exists(const Id<IdType>& id) const
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(id.index));
+			}
+			#endif
+
 			if (m_pData[id.index].bActive)
 			{
 				if (m_pData[id.index].version == id.version)
@@ -553,9 +617,9 @@ class IndexedVector
 		}
 
 		/**
-		Queries the existence of the given element.
+		Queries the existence of an element that compares equal to the given element.
 		@param element The element to search for
-		@return True if at least 1 of the element existed, false otherwise */
+		@return True if at least 1 equivalent element existed, false otherwise */
 		bool exists(const ElementType& element) const
 		{
 			IdType iCurrentIndex = 0;
@@ -574,7 +638,34 @@ class IndexedVector
 		}
 
 		/**
-		Counts the number of times the given element exists within the container.
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if at least 1 equal element existed, false otherwise */
+		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
+		bool exists(const ElementType2* pElement) const
+		{
+			// Function enabled if the element type is not a pointer. Allows the user
+			// to search for a specific element instead of any element that compares
+			// equal.
+
+			IdType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			{
+				if (m_pData[iCurrentIndex].bActive)
+				{
+					if (&m_pData[iCurrentIndex] == pElement)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		Counts the number of times an element that compares equal to the given element exists 
+		within the container.
 		@param element The element to search for
 		@return The number of occurences */
 		IdType count(const ElementType& element) const
@@ -616,7 +707,7 @@ class IndexedVector
 		equal to the iterator created via a call to end().
 		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(&m_pData[0]);
 		}
@@ -625,7 +716,7 @@ class IndexedVector
 		Creates an iterator targetting the theoretical element one past the last element in the
 		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(&m_pData[m_iNumElements]);
 		}
@@ -634,7 +725,7 @@ class IndexedVector
 		Creates a const iterator targetting the first element. When the vector is empty this
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(&m_pData[0]);
 		}
@@ -643,7 +734,7 @@ class IndexedVector
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(&m_pData[m_iNumElements]);
 		}

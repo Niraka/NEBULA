@@ -1,7 +1,7 @@
 /**
 A standard map.
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 10/11/2016
 
 @author Nathan Sainsbury */
@@ -9,6 +9,8 @@ A standard map.
 #ifndef MAP_H
 #define MAP_H
 
+#include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/Pair.h"
 #include "Engine/System/Tools/RBTree.h"
 #include "Engine/System/Tools/MapKeyComparator.h"
@@ -133,6 +135,19 @@ class Map
 		}
 
 		/**
+		Searches for and returns a reference to a value within the map. If the key-value mapping
+		did not exist it will be inserted with a default value. If the default insertion failed
+		undefined behaviour will be invoked.
+		@param key The key to search for
+		@return A reference to a value, or undefined
+		@see exists
+		@see tryToGet */
+		ValueType& operator[](const KeyType& key)
+		{
+			return m_tree.get(key).second;
+		}
+
+		/**
 		Inserts a key-value mapping in to the map with a default initialised value. If the key 
 		already existed or would cause the map to exceed its maximum capacity the insertion will
 		fail.
@@ -215,7 +230,7 @@ class Map
 		equal to the iterator created via a call to end().
 		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return m_tree.begin();
 		}
@@ -224,7 +239,7 @@ class Map
 		Creates an iterator targetting the theoretical element one past the last element in the
 		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return m_tree.end();
 		}
@@ -233,7 +248,7 @@ class Map
 		Creates a const iterator targetting the first element. When the vector is empty this
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return m_tree.cbegin();
 		}
@@ -242,7 +257,7 @@ class Map
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return m_tree.cend();
 		}

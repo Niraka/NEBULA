@@ -7,7 +7,7 @@ retrieve a particular element via a parameter-less call to get().
 @see Vector
 @see IndexedVector
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 18/10/2016
 
 @author Nathan Sainsbury */
@@ -15,10 +15,12 @@ retrieve a particular element via a parameter-less call to get().
 #ifndef CYCLIC_VECTOR_H
 #define CYCLIC_VECTOR_H
 
+#include <type_traits>
+
+#include "Engine/System/Tools/LanguageExtensions.h"
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/CyclicVectorIterator.h"
 #include "Engine/System/Tools/CyclicVectorConstIterator.h"
-#include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IndexType = unsigned int>
 class CyclicVector
@@ -298,10 +300,35 @@ class CyclicVector
 		@param iIndex The index to insert at */
 		void insert(const ElementType& element, IndexType iIndex)
 		{
-			if (iIndex < m_iNumElements)
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
 			{
-				m_pData[iIndex] = element;
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
 			}
+			#endif
+
+			m_pData[iIndex] = element;
+		}
+
+		/**
+		Retrieves a reference to an element. If the element did not exist, this function invokes
+		undefined behaviour.
+		@param iIndex The index to access
+		@return A reference to an element*/
+		ElementType& get(IndexType iIndex)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
+			}
+			#endif
+
+			return m_pData[iIndex];
 		}
 
 		/**
@@ -310,16 +337,45 @@ class CyclicVector
 		@param iIndex The index to access
 		@return A reference to an element
 		@see tryToGet */
-		ElementType& get(IndexType iIndex)
+		ElementType& operator[](IndexType iIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iIndex > m_iNumElements)
+			if (iIndex >= m_iMaxElements)
 			{
-				fatalexit("Attempting to access non-existant index in vector");
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
 			}
 			#endif
 
 			return m_pData[iIndex];
+		}
+		
+		/**
+		Retrieves a pointer to an element. If the element did not exist, a nullptr is returned
+		instead.
+		@param iIndex The index of the element to access
+		@return A pointer to an element, or a nullptr
+		@see get */
+		ElementType* tryToGet(IndexType iIndex)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
+			if (m_data[iIndex].second)
+			{
+				return &m_data[iIndex].first;
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
 
 		/**
@@ -331,13 +387,16 @@ class CyclicVector
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
 			}
-			if (iEndIndex > m_iNumElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -363,13 +422,16 @@ class CyclicVector
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
 			}
-			if (iEndIndex > m_iNumElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -398,6 +460,15 @@ class CyclicVector
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if ((iIndex + 1) == m_iNumElements)
 			{
 				--m_iNumElements;
@@ -425,7 +496,7 @@ class CyclicVector
 		}
 
 		/**
-		Removes and resets the first instance of the given element.
+		Removes and resets the first element that compares equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(const ElementType& element)
@@ -453,7 +524,7 @@ class CyclicVector
 		}
 
 		/**
-		Removes and resets all copies of the given element.
+		Removes and resets all elements that compare equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IndexType removeAllAndReset(const ElementType& element)
@@ -531,13 +602,16 @@ class CyclicVector
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
 			}
-			if (iEndIndex > m_iMaxElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -582,13 +656,16 @@ class CyclicVector
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return;
+				fatalexit("Out of bounds cyclic vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
 			}
-			if (iEndIndex > m_iMaxElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -604,9 +681,9 @@ class CyclicVector
 		}
 
 		/**
-		Queries the existence of the given element.
+		Queries the existence of an element that compares equal to the given element.
 		@param element The element to search for
-		@return True if at least 1 of the element existed, false otherwise */
+		@return True if at least 1 equivalent element existed, false otherwise */
 		bool exists(const ElementType& element) const
 		{
 			IndexType iCurrentIndex = 0;
@@ -620,9 +697,33 @@ class CyclicVector
 
 			return false;
 		}
+		
+		/**
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if at least 1 equal element existed, false otherwise */
+		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
+		bool exists(const ElementType2* pElement) const
+		{
+			// Function enabled if the element type is not a pointer. Allows the user
+			// to search for a specific element instead of any element that compares
+			// equal.
+
+			IndexType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			{
+				if (&m_pData[iCurrentIndex] == pElement)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 		/**
-		Counts the number of times the given element exists within the container.
+		Counts the number of times an element that compares equal to the given element exists
+		within the container.
 		@param element The element to search for
 		@return The number of occurences */
 		IndexType count(const ElementType& element) const
@@ -657,20 +758,20 @@ class CyclicVector
 		}		
 		
 		/**
-		Creates an iterator targetting the first element. When the array is empty this iterator is 
+		Creates an iterator targetting the first element. When the vector is empty this iterator is 
 		equal to the iterator created via a call to end().
-		@return An iterator targetting the first element in the array
+		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(&m_pData[0]);
 		}
 
 		/**
 		Creates an iterator targetting the theoretical element one past the last element in the
-		array.
+		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(&m_pData[m_iMaxElements]);
 		}
@@ -679,16 +780,16 @@ class CyclicVector
 		Creates a const iterator targetting the first element. When the vector is empty this
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(&m_pData[0]);
 		}
 
 		/**
 		Creates a const iterator targetting the theoretical element one past the last element in
-		the array.
+		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(&m_pData[m_iMaxElements]);
 		}

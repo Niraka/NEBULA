@@ -8,7 +8,7 @@ current number of elements is also tracked for convenience.
 @see IndexedArray
 @see CyclicArray
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -16,8 +16,11 @@ current number of elements is also tracked for convenience.
 #ifndef TRACKED_ARRAY_H
 #define TRACKED_ARRAY_H
 
-#include "Engine/System/Tools/Pair.h"
+#include <type_traits>
+
 #include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/EngineBuildConfig.h"
+#include "Engine/System/Tools/Pair.h"
 #include "Engine/System/Tools/TrackedArrayIterator.h"
 #include "Engine/System/Tools/TrackedArrayConstIterator.h"
 
@@ -110,8 +113,8 @@ class TrackedArray
 		}
 
 		/**
-		Pops the last element off of the back of the array. If no such element existed, no action is
-		taken.
+		Pops the last element off of the back of the array. If no such element existed, no action 
+		is taken.
 		@return True if an element was removed, false otherwise */
 		bool popAndReset()
 		{
@@ -140,6 +143,15 @@ class TrackedArray
 		@param iIndex The index to insert at */
 		void insert(const ElementType& element, IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (!m_data[iIndex].second)
 			{
 				m_data[iIndex].second = true;
@@ -157,6 +169,42 @@ class TrackedArray
 		@see tryToGet */
 		ElementType& get(IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
+			if (m_data[iIndex].second)
+			{
+				return m_data[iIndex].first;
+			}
+			else
+			{
+				fatalexit("Attempting to access non-existent tracked array element");
+			}
+		}
+
+		/**
+		Retrieves a reference to an element. If the element did not exist, this function invokes
+		undefined behaviour.
+		@param iIndex The index of the element to access
+		@return A reference to an element
+		@see tryToGet */
+		ElementType& operator[](IndexType iIndex)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_data[iIndex].second)
 			{
 				return m_data[iIndex].first;
@@ -175,6 +223,15 @@ class TrackedArray
 		@see get */
 		ElementType* tryToGet(IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_data[iIndex].second)
 			{
 				return &m_data[iIndex].first;
@@ -194,6 +251,20 @@ class TrackedArray
 		@return The number of elements removed */
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IndexType iNumRemoved = 0;
 			IndexType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -217,6 +288,20 @@ class TrackedArray
 		@return The number of elements removed */
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IndexType iNumRemoved = 0;
 			IndexType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -240,6 +325,15 @@ class TrackedArray
 		@return The number of elements removed, which is at most 1 */
 		IndexType remove(IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_data[iIndex].second)
 			{
 				m_data[iIndex].second = false;
@@ -257,6 +351,15 @@ class TrackedArray
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			if (m_data[iIndex].second)
 			{
 				m_data[iIndex].first = ElementType();
@@ -269,8 +372,9 @@ class TrackedArray
 		}
 
 		/**
-		Removes the first instance of the given element. Note that the element is only flagged as
-		removed and is not actually removed. Use removeAndReset to actually remove the element.
+		Removes the first element that compares equal to the given element. Note that the element 
+		is only flagged as removed and is not actually removed. Use removeAndReset to actually
+		remove the element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IndexType remove(const ElementType& element)
@@ -293,7 +397,7 @@ class TrackedArray
 		}
 		
 		/**
-		Removes and resets the first instance of the given element.
+		Removes and resets the first element that compares equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(const ElementType& element)
@@ -317,8 +421,9 @@ class TrackedArray
 		}
 
 		/**
-		Removes all copies of the given element. Note that the element is only flagged as removed
-		and is not actually removed. Use removeAllAndReset to actually remove the element.
+		Removes all elements that compare equal to the given element. Note that the element is only
+		flagged as removed and is not actually removed. Use removeAllAndReset to actually remove 
+		the element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IndexType removeAll(const ElementType& element)
@@ -342,7 +447,7 @@ class TrackedArray
 		}
 
 		/**
-		Removes and resets all copies of the given element. 
+		Removes and resets all elements that compare equal to the given element. 
 		@param element The element to remove
 		@return The number of elements removed */
 		IndexType removeAllAndReset(const ElementType& element)
@@ -367,8 +472,8 @@ class TrackedArray
 		}
 		
 		/**
-		Clears the container. All elements are removed. This is functionally equivalent to calling
-		reset. */
+		Clears the container. All elements are reinitialised. This is functionally equivalent to 
+		calling reset. */
 		void clear()
 		{
 			IndexType iCurrentIndex = 0;
@@ -416,6 +521,20 @@ class TrackedArray
 		IndexType replaceRange(const ElementType& first, const ElementType& second, 
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IndexType iNumReplaced = 0;
 			IndexType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
@@ -456,6 +575,20 @@ class TrackedArray
 		@param iEndIndex The end index (exclusive) */
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iEndIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(iEndIndex));
+			}
+			if (iStartIndex >= iEndIndex)
+			{
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
+			}
+			#endif
+
 			IndexType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
 			{
@@ -469,18 +602,27 @@ class TrackedArray
 		}
 
 		/**
-		Queries the existence of any element at the given index.
+		Queries the existence of an element at the given index.
 		@param iIndex The index to query
 		@return True if an element existed at the index, false otherwise */
 		bool exists(IndexType iIndex) const
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds tracked array access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
+					+ std::to_string(iIndex));
+			}
+			#endif
+
 			return m_data[iIndex].second;
 		}
 
 		/**
-		Queries the existence of the given element.
+		Queries the existence of an element that compares equal to the given element.
 		@param element The element to search for
-		@return True if at least 1 of the element existed, false otherwise */
+		@return True if at least 1 equivalent element existed, false otherwise */
 		bool exists(const ElementType& element) const
 		{
 			IndexType iCurrentIndex = 0;
@@ -489,6 +631,32 @@ class TrackedArray
 				if (m_data[iCurrentIndex].second)
 				{
 					if (m_data[iCurrentIndex].first == element)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if at least 1 equal element existed, false otherwise */
+		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
+		bool exists(const ElementType2* pElement) const
+		{
+			// Function enabled if the element type is not a pointer. Allows the user
+			// to search for a specific element instead of any element that compares
+			// equal.
+
+			IndexType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			{
+				if (m_data[iCurrentIndex].second)
+				{
+					if (&m_data[iCurrentIndex].first == pElement)
 					{
 						return true;
 					}
@@ -563,7 +731,7 @@ class TrackedArray
 		/**
 		Creates an iterator targetting the first element in the array.
 		@return An iterator targetting the first element in the array */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(&m_data[0]);
 		}
@@ -572,7 +740,7 @@ class TrackedArray
 		Creates an iterator targetting the theoretical element one past the last element in the
 		array.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(&m_data[m_iMaxElements]);
 		}
@@ -580,7 +748,7 @@ class TrackedArray
 		/**
 		Creates a const iterator targetting the first element in the array.
 		@return A const iterator targetting the first element in the array */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(&m_data[0]);
 		}
@@ -589,7 +757,7 @@ class TrackedArray
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the array.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(&m_data[m_iMaxElements]);
 		}

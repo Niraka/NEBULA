@@ -4,7 +4,7 @@ A standard vector.
 @see IndexedVector
 @see CyclicVector
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -12,10 +12,12 @@ A standard vector.
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <type_traits>
+
+#include "Engine/System/Tools/LanguageExtensions.h"
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/VectorIterator.h"
 #include "Engine/System/Tools/VectorConstIterator.h"
-#include "Engine/System/Tools/LanguageExtensions.h"
 
 template <class ElementType, class IndexType = unsigned int>
 class Vector
@@ -216,6 +218,23 @@ class Vector
 		@param iIndex The index to insert at */
 		void insert(const ElementType& element, IndexType iIndex)
 		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iNumElements)
+			{
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}		
+			}
+			#endif
+
 			if (iIndex < m_iNumElements)
 			{
 				m_pData[iIndex] = element;
@@ -226,14 +245,50 @@ class Vector
 		Retrieves a reference to an element. If the element did not exist, this function invokes
 		undefined behaviour.
 		@param iIndex The index to access
-		@return A reference to an element 
-		@see tryToGet */
+		@return A reference to an element */
 		ElementType& get(IndexType iIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
 			if (iIndex >= m_iNumElements)
 			{
-				fatalexit("Attempting to access non-existant index in vector");
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
+			}
+			#endif
+
+			return m_pData[iIndex];
+		}
+
+		/**
+		Retrieves a reference to an element. If the element did not exist, this function invokes
+		undefined behaviour.
+		@param iIndex The index to access
+		@return A reference to an element */
+		ElementType& operator[](IndexType iIndex)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iNumElements)
+			{
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
 			}
 			#endif
 
@@ -249,13 +304,24 @@ class Vector
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
 			}
-			if (iEndIndex > m_iNumElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -280,13 +346,24 @@ class Vector
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
 			}
-			if (iEndIndex > m_iNumElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -313,7 +390,24 @@ class Vector
 		@param iIndex The index of the element to remove
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(IndexType iIndex)
-		{	
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (iIndex >= m_iNumElements)
+			{
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
+			}
+			#endif
+
 			if ((iIndex + 1) == m_iNumElements)
 			{
 				--m_iNumElements;
@@ -339,7 +433,7 @@ class Vector
 		}
 
 		/**
-		Removes and resets the first instance of the given element.
+		Removes and resets the first element that compares equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(const ElementType& element)
@@ -366,7 +460,7 @@ class Vector
 		}
 
 		/**
-		Removes and resets all copies of the given element.
+		Removes and resets all elements that compare equal to the given element.
 		@param element The element to remove
 		@return The number of elements removed */
 		IndexType removeAllAndReset(const ElementType& element)
@@ -449,13 +543,24 @@ class Vector
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return 0;
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
 			}
-			if (iEndIndex > m_iMaxElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return 0;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -500,13 +605,24 @@ class Vector
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iStartIndex > iEndIndex)
+			if (iEndIndex >= m_iNumElements)
 			{
-				return;
+				if (m_iNumElements > 0)
+				{
+					fatalexit("Out of bounds vector access. Max index: " +
+						std::to_string(m_iNumElements - 1) + ". Attempted access: "
+						+ std::to_string(iIndex));
+				}
+				else
+				{
+					fatalexit("Out of bounds vector access. Max index: 0"
+						". Attempted access: " + std::to_string(iIndex));
+				}
 			}
-			if (iEndIndex > m_iMaxElements)
+			if (iStartIndex >= iEndIndex)
 			{
-				return;
+				fatalexit("Invalid range parameters. End index must be greater than start index. " 
+					"Start: " + std::to_string(iStartIndex) + ". End: " + std::to_string(iEndIndex));
 			}
 			#endif
 
@@ -522,7 +638,7 @@ class Vector
 		}
 
 		/**
-		Queries the existence of the given element.
+		Queries the existence of an element that compares equal with the given element.
 		@param element The element to search for
 		@return True if at least 1 of the element existed, false otherwise */
 		bool exists(const ElementType& element) const
@@ -537,6 +653,49 @@ class Vector
 			}
 
 			return false;
+		}
+
+		/**
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if at least 1 equal element existed, false otherwise */
+		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
+		bool exists(const ElementType2* pElement) const
+		{
+			// Function enabled if the element type is not a pointer. Allows the user
+			// to search for a specific element instead of any element that compares
+			// equal.
+
+			IndexType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			{
+				if (&m_pData[iCurrentIndex] == pElement)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		Counts the number of times an element that compares equal with the given element exists
+		within the container.
+		@param element The element to search for
+		@return The number of occurences */
+		IndexType count(const ElementType& element) const
+		{
+			IndexType iCount = 0;
+			IndexType iCurrentIndex = 0;
+			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			{
+				if (m_pData[iCurrentIndex] == element)
+				{
+					++iCount;
+				}
+			}
+
+			return iCount;
 		}
 
 		/**
@@ -560,7 +719,7 @@ class Vector
 		equal to the iterator created via a call to end().
 		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(&m_pData[0]);
 		}
@@ -569,7 +728,7 @@ class Vector
 		Creates an iterator targetting the theoretical element one past the last element in the
 		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(&m_pData[m_iNumElements]);
 		}
@@ -578,7 +737,7 @@ class Vector
 		Creates a const iterator targetting the first element. When the vector is empty this 
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(&m_pData[0]);
 		}
@@ -587,7 +746,7 @@ class Vector
 		Creates a const iterator targetting the theoretical element one past the last element in 
 		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(&m_pData[m_iNumElements]);
 		}

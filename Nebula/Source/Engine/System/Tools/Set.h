@@ -1,7 +1,7 @@
 /**
 A standard set.
 
-@date edited 05/01/2017
+@date edited 09/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -9,8 +9,9 @@ A standard set.
 #ifndef SET_H
 #define SET_H
 
-#include "Engine/System/Tools/RBTree.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
+#include "Engine/EngineBuildConfig.h"
+#include "Engine/System/Tools/RBTree.h"
 
 template <class ElementType, class Comparator = std::less<ElementType>>
 class Set
@@ -115,6 +116,19 @@ class Set
 		}
 
 		/**
+		Searches for and returns a reference to an element within the set. If the element did not
+		exist it will be inserted. If the default insertion	failed undefined behaviour will be
+		invoked.
+		@param element The element to search for
+		@return A reference to an element, or undefined
+		@see exists
+		@see tryToGet */
+		const ElementType& operator[](const ElementType& element)
+		{
+			return m_tree.get(element);
+		}
+
+		/**
 		Inserts an element in to the set. If the element already existed or would cause the set
 		to exceed its maximum capacity, the element will not be inserted.
 		@param element The element to insert
@@ -161,7 +175,7 @@ class Set
 		equal to the iterator created via a call to end().
 		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return m_tree.begin();
 		}
@@ -170,7 +184,7 @@ class Set
 		Creates an iterator targetting the theoretical element one past the last element in the
 		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return m_tree.end();
 		}
@@ -179,7 +193,7 @@ class Set
 		Creates a const iterator targetting the first element. When the vector is empty this
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return m_tree.cbegin();
 		}
@@ -188,7 +202,7 @@ class Set
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return m_tree.cend();
 		}

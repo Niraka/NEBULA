@@ -1027,7 +1027,7 @@ class RBTree
 		equal to the iterator created via a call to end().
 		@return An iterator targetting the first element in the vector
 		@see end */
-		Iterator begin()
+		Iterator begin() const
 		{
 			return Iterator(m_pLeftMost);
 		}
@@ -1036,7 +1036,7 @@ class RBTree
 		Creates an iterator targetting the theoretical element one past the last element in the
 		vector.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
+		Iterator end() const
 		{
 			return Iterator(m_pHeadNode);
 		}
@@ -1045,7 +1045,7 @@ class RBTree
 		Creates a const iterator targetting the first element. When the vector is empty this
 		iterator is equal to the iterator created via a call to cend().
 		@return A const iterator targetting the first element in the vector */
-		ConstIterator cbegin()
+		ConstIterator cbegin() const
 		{
 			return ConstIterator(m_pLeftMost);
 		}
@@ -1054,7 +1054,7 @@ class RBTree
 		Creates a const iterator targetting the theoretical element one past the last element in
 		the vector.
 		@return A const iterator targetting the theoretical element one past the last element */
-		ConstIterator cend()
+		ConstIterator cend() const
 		{
 			return ConstIterator(m_pHeadNode);
 		}
