@@ -66,8 +66,10 @@
     <ClInclude Include="Source\Engine\System\Tools\IndexedVectorConstIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedVectorIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h" />
+    <ClInclude Include="Source\Engine\System\Tools\FakeParam.h" />
     <ClInclude Include="Source\Engine\System\Tools\RBTreeConstIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\RBTreeIterator.h" />
+    <ClInclude Include="Source\Engine\System\Tools\SetKeyComparator.h" />
     <ClInclude Include="Source\Engine\System\Tools\TrackedArrayConstIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\TrackedArrayIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\VectorConstIterator.h" />

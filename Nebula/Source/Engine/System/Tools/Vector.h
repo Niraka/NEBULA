@@ -4,7 +4,7 @@ A standard vector.
 @see IndexedVector
 @see CyclicVector
 
-@date edited 09/01/2017
+@date edited 19/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -14,6 +14,7 @@ A standard vector.
 
 #include <type_traits>
 
+#include "Engine/System/Tools/FakeParam.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/VectorIterator.h"
@@ -640,7 +641,7 @@ class Vector
 		/**
 		Queries the existence of an element that compares equal with the given element.
 		@param element The element to search for
-		@return True if at least 1 of the element existed, false otherwise */
+		@return True if at least 1 of the element existed, false otherwise */	
 		bool exists(const ElementType& element) const
 		{
 			IndexType iCurrentIndex = 0;
@@ -651,7 +652,7 @@ class Vector
 					return true;
 				}
 			}
-
+		
 			return false;
 		}
 
@@ -659,13 +660,12 @@ class Vector
 		Queries the existence of an element.
 		@param pElement A pointer to the element to search for
 		@return True if at least 1 equal element existed, false otherwise */
-		template <class ElementType2 = std::enable_if<!std::is_pointer<ElementType>::value, ElementType>>
-		bool exists(const ElementType2* pElement) const
+		bool exists(typename std::conditional<std::is_pointer<ElementType>::value, FakeParam,
+				const ElementType*>::type pElement) const
 		{
-			// Function enabled if the element type is not a pointer. Allows the user
-			// to search for a specific element instead of any element that compares
-			// equal.
-
+			// Function disabled for pointer types. Allows the user to search for a 
+			// specific element instead of any element that compares equal.
+		
 			IndexType iCurrentIndex = 0;
 			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
@@ -674,7 +674,7 @@ class Vector
 					return true;
 				}
 			}
-
+		
 			return false;
 		}
 

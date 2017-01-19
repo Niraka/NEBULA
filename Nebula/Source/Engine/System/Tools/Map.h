@@ -1,7 +1,7 @@
 /**
 A standard map.
 
-@date edited 09/01/2017
+@date edited 19/01/2017
 @date authored 10/11/2016
 
 @author Nathan Sainsbury */
@@ -94,12 +94,25 @@ class Map
 		}
 
 		/**
-		Queries the existence of a key within the map.
+		Queries the existence of an element whose key compares equal to the given key.
 		@param key The key to search for
 		@return True if the key was found, false if it was not */
 		bool exists(const KeyType& key)
 		{
 			return m_tree.exists(key);
+		}
+
+		/**
+		Queries the existence of an element at the given key.
+		@param pKey A pointer to the element to search for
+		@return True if the key was found, false otherwise */
+		bool exists(typename std::conditional<std::is_pointer<KeyType>::value, FakeParam,
+			const KeyType*>::type pKey)
+		{
+			// Function disabled for pointer types. Allows the user to search for a 
+			// specific element instead of any element that compares equal.
+
+			return m_tree.exists(pKey);
 		}
 
 		/**

@@ -4,7 +4,7 @@ A red-black tree.
 The tree possesses a single element cache that is populated by the last accessed/modified element
 so that consecutive uses of a single element are quicker.
 
-@date edited 05/01/2017
+@date edited 19/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -13,7 +13,9 @@ so that consecutive uses of a single element are quicker.
 #define RB_TREE_H
 
 #include <limits.h>
+#include <type_traits>
 
+#include "Engine/System/Tools/FakeParam.h"
 #include "Engine/System/Tools/RBTreeNode.h"
 #include "Engine/System/Tools/RBTreeElementBuilder.h"
 #include "Engine/System/Tools/LanguageExtensions.h"
@@ -867,6 +869,61 @@ class RBTree
 					else
 					{
 						if (m_comparator(key, pCurrentNode->element))
+						{
+							pCurrentNode = pCurrentNode->pLeftChild;
+						}
+						else
+						{
+							pCurrentNode = pCurrentNode->pRightChild;
+						}
+					}
+				}
+
+				return false;
+			}
+		}
+
+		/**
+		Queries the existence of an element within the tree.
+		@param pElement A pointer to the element to search for
+		@return True if the element existed, false if it did not */
+		bool exists(typename std::conditional<std::is_pointer<KeyType>::value, FakeParam,
+			const KeyType*>::type pElement) 
+		{
+			if (m_uiNumElements == 0)
+			{
+				return false;
+			}
+			else if (notnullptr(m_pCachedElement) &&
+				!m_comparator(*pElement, m_pCachedElement->element) &&
+				!m_comparator(m_pCachedElement->element, *pElement))
+			{
+				// Check the cached element
+				if (m_comparator(pElement, &(m_pCachedElement->element)))
+				{
+					return true;
+				}
+				return false;
+			}
+			else
+			{
+				// Search tree for element
+				RBTreeNode<ElementType>* pCurrentNode = m_pRootNode;
+				while (!pCurrentNode->bIsLeaf)
+				{
+					if (!m_comparator(*pElement, pCurrentNode->element) &&
+						!m_comparator(pCurrentNode->element, *pElement))
+					{
+						if (m_comparator(pElement, &(pCurrentNode->element)))
+						{
+							m_pCachedElement = pCurrentNode;
+							return true;
+						}
+						return false;
+					}
+					else
+					{
+						if (m_comparator(*pElement, pCurrentNode->element))
 						{
 							pCurrentNode = pCurrentNode->pLeftChild;
 						}

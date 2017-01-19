@@ -1,7 +1,7 @@
 /**
 A standard set.
 
-@date edited 09/01/2017
+@date edited 19/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -12,12 +12,15 @@ A standard set.
 #include "Engine/System/Tools/LanguageExtensions.h"
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/System/Tools/RBTree.h"
+#include "Engine/System/Tools/SetKeyComparator.h"
 
 template <class ElementType, class Comparator = std::less<ElementType>>
 class Set
 {
 	private:
-		typedef RBTree<ElementType, ElementType, Comparator> Tree;
+		typedef RBTree<const ElementType, 
+					   const ElementType, 
+			           SetKeyComparator<const ElementType, Comparator>> Tree;
 		Tree m_tree;
 
 	protected:
@@ -83,12 +86,22 @@ class Set
 		}
 
 		/**
-		Queries the existence of an element within the set. 
+		Queries the existence of an element that compares equal to the given element.
 		@param element The element to search for
 		@return True if the element was found, false if it was not */
 		bool exists(const ElementType& element)
 		{
 			return m_tree.exists(element);
+		}
+
+		/**
+		Queries the existence of an element.
+		@param pElement A pointer to the element to search for
+		@return True if the key was found, false otherwise */
+		bool exists(typename std::conditional<std::is_pointer<ElementType>::value, FakeParam,
+			const ElementType*>::type pElement)
+		{
+			return m_tree.exists(pElement);
 		}
 
 		/**

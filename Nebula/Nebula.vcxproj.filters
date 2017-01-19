@@ -276,6 +276,12 @@
     <ClInclude Include="Source\Engine\System\Tools\TrackedArrayIterator.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\FakeParam.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\SetKeyComparator.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Documents\File System Class Diagram.png">
