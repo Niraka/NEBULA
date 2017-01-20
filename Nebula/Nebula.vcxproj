@@ -34,6 +34,9 @@
     <ClCompile Include="Source\Engine\Layer\ModuleLayer.cpp" />
     <ClCompile Include="Source\Engine\Layer\ResourceLayer.cpp" />
     <ClCompile Include="Source\Engine\Layer\SystemLayer.cpp" />
+    <ClCompile Include="Source\Engine\System\Schedule\ScheduledItem.cpp" />
+    <ClCompile Include="Source\Engine\System\Schedule\Scheduler.cpp" />
+    <ClCompile Include="Source\Engine\System\Schedule\SchedulerRate.cpp" />
     <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp" />
     <ClCompile Include="Source\Launch\Launcher.cpp" />
   </ItemGroup>
@@ -47,6 +50,18 @@
     <ClInclude Include="Source\Engine\Layer\ModuleLayer.h" />
     <ClInclude Include="Source\Engine\Layer\ResourceLayer.h" />
     <ClInclude Include="Source\Engine\Layer\SystemLayer.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\ScheduledItem.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\Scheduler.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerConfig.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerEvent.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerEventTypes.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerExecutionData.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerIntervals.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerItemInfo.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerListener.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerRate.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerRatePresets.h" />
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerTimeInfo.h" />
     <ClInclude Include="Source\Engine\System\Tools\Array.h" />
     <ClInclude Include="Source\Engine\System\Tools\ArrayConstIterator.h" />
     <ClInclude Include="Source\Engine\System\Tools\ArrayIterator.h" />

@@ -68,9 +68,6 @@
     <Filter Include="Source\Engine\System\Property">
       <UniqueIdentifier>{b3d2b3c3-cf24-46c4-9259-cb0ba5a35be8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Engine\System\Schedule">
-      <UniqueIdentifier>{cbc70f0f-e2e3-4062-8ece-10ab5117d795}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Engine\Resource">
       <UniqueIdentifier>{b3e0b6e3-426a-420b-af83-2d45d0a9123e}</UniqueIdentifier>
     </Filter>
@@ -85,6 +82,9 @@
     </Filter>
     <Filter Include="Source\Engine\System\Thread">
       <UniqueIdentifier>{9cd14347-cfea-47a7-bbbe-4375038baf59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\System\Schedule">
+      <UniqueIdentifier>{92557557-4482-43eb-aaf2-9a4b29dbc379}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +114,15 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp">
       <Filter>Source\Engine\System\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\System\Schedule\SchedulerRate.cpp">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\System\Schedule\Scheduler.cpp">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\System\Schedule\ScheduledItem.cpp">
+      <Filter>Source\Engine\System\Schedule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +290,42 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\SetKeyComparator.h">
       <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerTimeInfo.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerRatePresets.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerRate.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerListener.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerItemInfo.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerExecutionData.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerEventTypes.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerEvent.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerConfig.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\Scheduler.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\ScheduledItem.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Schedule\SchedulerIntervals.h">
+      <Filter>Source\Engine\System\Schedule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
