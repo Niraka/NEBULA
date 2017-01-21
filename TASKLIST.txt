@@ -1,24 +1,30 @@
-Active task:
+Active task: Develop timer subsystem
 ========================
 Briefly:
 
-To develop a simple collection of tools that will be used throughout the
-engine.
+To develop a "timer" system that allows users to create and listen to
+events produced by timer objects. Timer objects can be configured to 
+operate differently depending on their type and provide a number of
+useful-for-games timing functionality.
 
 ========================
 Info:
 
-Tools include:
-- Containers
-- Very common structures
-- Conversion and mathematical utilities not provided by external libraries
-- Minor standard extensions
+Requirements:
+- To create timers with a given configuration
+- To be able to modify all timer properties
+- To be able to modify timer durations via a number of convenience functions, E.G:
+	- extend(duration)
+	- reduce(duration)
+	- restart()
+- To be able to register to listen to timer events
+- To be able to launch timer events
 
 ========================
 Notes:
 
-The final list of tools will probably be extended as time goes on. Containers
- are the most important part.
+The timer system should be constructed such that it will be easy to convert
+to a multi-threaded system in the future if it proves to be worthwhile.
 
 ==========================================================================
 ==========================================================================
@@ -31,7 +37,6 @@ phase are:
 - File
 - Logging
 - Property
-- Schedule
 - Thread
 - Timer
 
@@ -39,3 +44,6 @@ phase are:
 ==========================================================================
 ==========================================================================
 Completed tasks:
+
+Scheduler subsystem version 1.0
+Tool set version 1.0
