@@ -4,7 +4,7 @@ A scheduler rate describes an update rate to be used by the scheduler.
 Update rates are stored as nanosecond timesteps internally. For example, an update rate of
 60 ticks per second will be represented by 16600000 nanoseconds.
 
-@date edited 20/01/2017
+@date edited 25/01/2017
 @date authored 29/11/2016
 
 @author Nathan Sainsbury */
@@ -13,6 +13,7 @@ Update rates are stored as nanosecond timesteps internally. For example, an upda
 #define SCHEDULER_RATE_H
 
 #include <chrono>
+#include <cstdint>
 
 #include "Engine/System/Schedule/SchedulerIntervals.h"
 #include "Engine/System/Schedule/SchedulerRatePresets.h"
@@ -33,7 +34,7 @@ class SchedulerRate
 		Constructs a rate with the given count at the given interval.
 		@param iCount The count
 		@param interval The interval */
-		SchedulerRate(int iCount, SchedulerIntervals interval);
+		SchedulerRate(std::int32_t iCount, SchedulerIntervals interval);
 
 		/**
 		Constructs a rate with the given preset.
@@ -44,7 +45,7 @@ class SchedulerRate
 		Sets the rate.
 		@param iCount The count
 		@param interval The interval */
-		void set(int iCount, SchedulerIntervals interval);
+		void set(std::int32_t iCount, SchedulerIntervals interval);
 
 		/**
 		Sets the rate.

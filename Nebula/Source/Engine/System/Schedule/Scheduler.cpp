@@ -93,7 +93,7 @@ void Scheduler::start()
 	}
 
 	timeStep = m_activeConfig.updateRate.getTimestep();
-	timeSkipSleepThreshold = std::chrono::nanoseconds((long long)(0.025 * timeStep.count()));
+	timeSkipSleepThreshold = std::chrono::nanoseconds((std::int64_t)(0.025 * timeStep.count()));
 
 	// Announce start to listeners
 	SchedulerEvent schedulerEvent(SchedulerEventTypes::SCHEDULER_STARTED);

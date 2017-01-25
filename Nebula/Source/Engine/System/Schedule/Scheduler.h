@@ -5,7 +5,7 @@ a set of schedule objects according the specification it is provided.
 The scheduler is not thread-safe. All function calls should occur on a single thread (or should be
 exceptionally carefully managed).
 
-@date edited 20/01/2017
+@date edited 25/01/2017
 @date authored 29/11/2016
 
 @author Nathan Sainsbury */
@@ -16,6 +16,7 @@ exceptionally carefully managed).
 #include <thread>
 #include <chrono>
 #include <algorithm>
+#include <cstdint>
 
 #include "Engine/System/Tools/Pair.h"
 #include "Engine/System/Tools/Vector.h"
@@ -30,7 +31,7 @@ exceptionally carefully managed).
 class Scheduler
 {
 	private:
-		const static int m_iUnlimitedIndicator = -1;
+		const static std::int32_t m_iUnlimitedIndicator = -1;
 		bool m_bSchedulerRunning;
 		SchedulerExecutionData m_executionData;
 		SchedulerConfig m_activeConfig;

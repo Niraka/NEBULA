@@ -5,7 +5,7 @@ SchedulerRate::SchedulerRate()
 	m_timestep = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1)) / 60;
 }
 
-SchedulerRate::SchedulerRate(int iCount, SchedulerIntervals interval)
+SchedulerRate::SchedulerRate(std::int32_t iCount, SchedulerIntervals interval)
 {
 	set(iCount, interval);
 }
@@ -15,7 +15,7 @@ SchedulerRate::SchedulerRate(SchedulerRatePresets preset)
 	set(preset);
 }
 
-void SchedulerRate::set(int iCount, SchedulerIntervals interval)
+void SchedulerRate::set(std::int32_t iCount, SchedulerIntervals interval)
 {
 	switch (interval)
 	{

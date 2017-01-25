@@ -5,13 +5,15 @@ scheduler.
 "Fixed timestepping" AKA every frame of execution reportedly takes exactly the same amount of time
 can be enabled by setting the interpolation cap to 1.
 
-@date edited 20/01/2017
+@date edited 25/01/2017
 @date authored 07/01/2017
 
 @author Nathan Sainsbury */
 
 #ifndef SCHEDULER_CONFIG_H
 #define SCHEDULER_CONFIG_H
+
+#include <cstdint>
 
 #include "Engine/System/Schedule/SchedulerRate.h"
 
@@ -20,7 +22,7 @@ struct SchedulerConfig
 	/**
 	The update rate of the scheduler. Scheduled items cannot be updated faster than the rate of
 	the scheduler itself. Unlimited and very high rates are supported but are not recommended.
-	Note that update rates below 1 or above 120 are considered unlimited. */
+	Note that an update rate of -1 is considered unlimited. */
 	SchedulerRate updateRate;
 
 	/**
@@ -38,7 +40,7 @@ struct SchedulerConfig
 	/**
 	The number of seconds between each lag warning. Setting this to 0 will disable the warning
 	entirely. */
-	unsigned int uiLagWarningFrequency;
+	std::uint32_t uiLagWarningFrequency;
 	
 	/**
 	Enables or disables the ability to stop the scheduler via a scheduled items requestStop flag. */
