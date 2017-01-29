@@ -1,7 +1,7 @@
 /**
 A const forward iterator for an indexed vector.
 
-@date edited 05/01/2017
+@date edited 29/01/2017
 @date authored 18/12/2016
 
 @author Nathan Sainsbury */
@@ -11,22 +11,31 @@ A const forward iterator for an indexed vector.
 
 #include "Engine/System/Tools/IndexedVectorEntry.h"
 
-template <class ElementType, class IdType>
+template <class ElementType, class IndexType>
 class IndexedVectorConstIterator
 {
 	private:
-		typedef IndexedVectorConstIterator<ElementType, IdType> Iter;
-		IndexedVectorEntry<ElementType, IdType>* m_pElement;
+		typedef IndexedVectorConstIterator<ElementType, IndexType> Iter;
+		IndexedVectorEntry<ElementType, IndexType>* m_pCurrent;
+		IndexedVectorEntry<ElementType, IndexType>* m_pLast;
+		IndexedVectorEntry<ElementType, IndexType>* m_pFirst;
 
 	protected:
 
 	public:
 		/**
-		Constructs an iterator targetting the given element.
-		@param pElement The address of the element to target */
-		IndexedVectorConstIterator(IndexedVectorEntry<ElementType, IdType>* pElement)
+		Constructs an iterator targetting the given current element.
+		@param pFirst A pointer to the first element
+		@param pLast A pointer to the last element
+		@param pCurrent A pointer to the current element */
+		IndexedVectorConstIterator(
+			IndexedVectorEntry<ElementType, IndexType>* pFirst,
+			IndexedVectorEntry<ElementType, IndexType>* pLast,
+			IndexedVectorEntry<ElementType, IndexType>* pCurrent)
 		{
-			m_pElement = pElement;
+			m_pFirst = pFirst;
+			m_pLast = pLast;
+			m_pCurrent = pCurrent;
 		}
 
 		/**
@@ -34,7 +43,9 @@ class IndexedVectorConstIterator
 		@param other The iterator to copy */
 		IndexedVectorConstIterator(const Iter& other)
 		{
-			m_pElement = other.m_pElement;
+			m_pFirst = other.m_pFirst;
+			m_pLast = other.m_pLast;
+			m_pCurrent = other.m_pCurrent;
 		}
 
 		/**
@@ -43,7 +54,10 @@ class IndexedVectorConstIterator
 		@return A reference to this iterator */
 		Iter& operator=(const Iter& other)
 		{
-			m_pElement = other.m_pElement;
+			m_pFirst = other.m_pFirst;
+			m_pLast = other.m_pLast;
+			m_pCurrent = other.m_pCurrent;
+
 			return *this;
 		}
 
@@ -51,7 +65,9 @@ class IndexedVectorConstIterator
 		Destructs the iterator. */
 		~IndexedVectorConstIterator()
 		{
-			m_pElement = nullptr;
+			m_pFirst = nullptr;
+			m_pLast = nullptr;
+			m_pCurrent = nullptr;
 		}
 
 		/**
@@ -60,9 +76,18 @@ class IndexedVectorConstIterator
 		@return A copy of the iterator */
 		Iter operator++(int)
 		{
-			Iter temp = *this;
-			++m_pElement;
-			return temp;
+			if (m_pCurrent != m_pLast)
+			{
+				Iter temp = *this;
+				++m_pCurrent;
+				while (m_pCurrent != m_pLast && !m_pCurrent->bActive)
+				{
+					++m_pCurrent;
+				}
+				return temp;
+			}
+
+			return *this;
 		}
 
 		/**
@@ -70,7 +95,15 @@ class IndexedVectorConstIterator
 		@return A reference to this iterator */
 		Iter& operator++()
 		{
-			++m_pElement;
+			if (m_pCurrent != m_pLast)
+			{
+				++m_pCurrent;
+				while (m_pCurrent != m_pLast && !m_pCurrent->bActive)
+				{
+					++m_pCurrent;
+				}
+			}
+
 			return *this;
 		}
 
@@ -80,9 +113,18 @@ class IndexedVectorConstIterator
 		@return A copy of the iterator */
 		Iter operator--(int)
 		{
-			Iter temp = *this;
-			--m_pElement;
-			return temp;
+			if (m_pCurrent != m_pFirst)
+			{
+				Iter temp = *this;
+				--m_pCurrent;
+				while (m_pCurrent != m_pFirst && !m_pCurrent->bActive)
+				{
+					--m_pCurrent;
+				}
+				return temp;
+			}
+
+			return *this;
 		}
 
 		/**
@@ -90,7 +132,15 @@ class IndexedVectorConstIterator
 		@return A reference to this iterator */
 		Iter& operator--()
 		{
-			--m_pElement;
+			if (m_pCurrent != m_pFirst)
+			{
+				--m_pCurrent;
+				while (m_pCurrent != m_pFirst && !m_pCurrent->bActive)
+				{
+					--m_pCurrent;
+				}
+			}
+
 			return *this;
 		}
 
@@ -100,7 +150,7 @@ class IndexedVectorConstIterator
 		@return True if the iterators are considered equal, false if they are not */
 		bool operator==(const Iter& other)
 		{
-			return m_pElement == other.m_pElement;
+			return m_pCurrent == other.m_pCurrent;
 		}
 
 		/**
@@ -109,7 +159,7 @@ class IndexedVectorConstIterator
 		@return True if the iterators are not considered equal, false if they are */
 		bool operator!=(const Iter& other)
 		{
-			return m_pElement != other.m_pElement;
+			return m_pCurrent != other.m_pCurrent;
 		}
 
 		/**
@@ -118,7 +168,7 @@ class IndexedVectorConstIterator
 		@return A reference to an element */
 		const ElementType& operator*()
 		{
-			return m_pElement->data;
+			return m_pCurrent->data;
 		}
 
 		/**
@@ -127,14 +177,14 @@ class IndexedVectorConstIterator
 		@return A reference to an element */
 		const ElementType* operator->()
 		{
-			return &(m_pElement->data);
+			return &(m_pCurrent->data);
 		}
 
 		/**
 		Moves the iterator to the next element. */
 		Iter& next()
 		{
-			++m_pElement;
+			++m_pCurrent;
 			return *this;
 		}
 
@@ -142,7 +192,7 @@ class IndexedVectorConstIterator
 		Moves the iterator to the previous element. */
 		Iter& prev()
 		{
-			--m_pElement;
+			--m_pCurrent;
 			return *this;
 		}
 };
