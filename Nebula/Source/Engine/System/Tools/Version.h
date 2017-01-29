@@ -1,7 +1,7 @@
 /**
 A version structure provides a convenient method of storing version information.
 
-@date edited 28/01/2017
+@date edited 29/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -234,7 +234,7 @@ struct Version
 	/**
 	Returns a string representation of the version.
 	@return A string representation */
-	std::string ToString() const
+	std::string toString() const
 	{
 		return std::to_string(uiMajor) + "." +
 			std::to_string(uiMinor) + "." +
