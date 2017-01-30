@@ -13,6 +13,12 @@ an incorrect choice of container. Users should prefer id-based functionality.
 Attempting to retrieve an element with a version number that does not match the current indices' 
 version number is equivalent to out of bounds access.
 
+Elements must be:
+- Non-const
+- Default constructible
+- Copy assignable
+- Copy constructible
+
 @see Vector
 @see CyclicVector
 
@@ -25,6 +31,7 @@ version number is equivalent to out of bounds access.
 #define INDEXED_VECTOR_H
 
 #include <cstdint>
+#include <typeinfo>
 #include <type_traits>
 
 #include "Engine/System/Tools/FakeParam.h"
@@ -92,6 +99,15 @@ class IndexedVector
 		Constructs an indexed vector with a size and growth of 5 . */
 		IndexedVector()
 		{
+			static_assert(!std::is_const<ElementType>::value, "Indexed Vector does not support "
+				"const element types");
+			static_assert(std::is_default_constructible<ElementType>::value, "Indexed Vector "
+				"requires elements to be default constructible");
+			static_assert(std::is_copy_constructible<ElementType>::value, "Indexed Vector "
+				"requires elements to be copy constructible");
+			static_assert(std::is_copy_assignable<ElementType>::value, "Indexed Vector requires "
+				"elements to be copy assignable");
+
 			m_pData = nullptr;
 			m_iMaxElements = 5;
 			m_iGrowth = 5;
