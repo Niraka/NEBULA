@@ -1,11 +1,17 @@
 /**
 An array of fixed size.
 
+Elements must be:
+- Non-const
+- Default constructible
+- Copy assignable
+- Copy constructible
+
 @see TrackedArray
 @see IndexedArray
 @see CyclicArray
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 05/10/2016
 
 @author Nathan Sainsbury */
@@ -31,12 +37,21 @@ class Array
 
 	public:
 		typedef ArrayIterator<ElementType> Iterator;
-		typedef ArrayConstIterator<ElementType> ConstIterator;
+		typedef ArrayConstIterator<const ElementType> ConstIterator;
 
 		/**
 		Constructor. */
 		Array()
 		{
+			static_assert(!std::is_const<ElementType>::value, "Array does not support const element "
+				"types");
+			static_assert(std::is_default_constructible<ElementType>::value, "Array requires "
+				"elements to be default constructible");
+			static_assert(std::is_copy_constructible<ElementType>::value, "Array requires elements "
+				"to be copy constructible");
+			static_assert(std::is_copy_assignable<ElementType>::value, "Array requires elements to "
+				"be copy assignable");
+
 			reset();
 		}
 
@@ -50,8 +65,7 @@ class Array
 		Resets the container. All elements are reinitialised. */
 		void reset()
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				m_data[iCurrentIndex] = ElementType();
 			}
@@ -321,8 +335,7 @@ class Array
 		@return True if at least 1 equal element existed, false otherwise */
 		bool exists(const ElementType& element) const
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				if (m_data[iCurrentIndex] == element)
 				{
@@ -343,8 +356,7 @@ class Array
 			// Function disabled for pointer types. Allows the user to search for a 
 			// specific element instead of any element that compares equal.
 
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				if (&m_data[iCurrentIndex] == pElement)
 				{
@@ -363,8 +375,7 @@ class Array
 		IndexType count(const ElementType& element) const
 		{
 			IndexType iCount = 0;
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				if (m_data[iCurrentIndex] == element)
 				{
@@ -386,7 +397,7 @@ class Array
 		/**
 		Creates an iterator targetting the first element in the array.
 		@return An iterator targetting the first element in the array */
-		Iterator begin() const
+		Iterator begin()
 		{
 			return Iterator(&m_data[0]);
 		}
@@ -395,7 +406,7 @@ class Array
 		Creates an iterator targetting the theoretical element one past the last element in the
 		array.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end() const
+		Iterator end()
 		{
 			return Iterator(&m_data[m_iMaxElements]);
 		}

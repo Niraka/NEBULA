@@ -31,7 +31,6 @@ Elements must be:
 #define INDEXED_VECTOR_H
 
 #include <cstdint>
-#include <typeinfo>
 #include <type_traits>
 
 #include "Engine/System/Tools/FakeParam.h"
