@@ -4,7 +4,7 @@
 TEST(Example, IntentionalSuccess) 
 {
 	// Do something
-	Engine engine;
+	Engine engine(EngineLimits());
 
 	// Make some assertions
 	ASSERT_TRUE(true);
@@ -13,7 +13,7 @@ TEST(Example, IntentionalSuccess)
 TEST(Example, IntentionalFailure)
 {
 	// Do something
-	Engine engine;
+	Engine engine(EngineLimits());
 
 	// Make some assertions
 	ASSERT_FALSE(true);
