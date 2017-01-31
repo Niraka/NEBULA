@@ -109,18 +109,6 @@
     <ClInclude Include="Source\Engine\System\Tools\IndexedVectorEntry.h" />
     <ClInclude Include="Source\Engine\System\Tools\Version.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="Documents\Content Layer Class Diagram.png" />
-    <Image Include="Documents\Event System Class Diagram.png" />
-    <Image Include="Documents\File System Class Diagram.png" />
-    <Image Include="Documents\Logging System Class Diagram.png" />
-    <Image Include="Documents\Platform Analysis Class Diagram.png" />
-    <Image Include="Documents\Property System Class Diagram.png" />
-    <Image Include="Documents\Resource Layer Class Diagram.png" />
-    <Image Include="Documents\Scheduler System Class Diagram.png" />
-    <Image Include="Documents\Thread System Class Diagram.png" />
-    <Image Include="Documents\Timer System Class Diagram.png" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{41FFAD05-DDCF-44B9-8683-7ED6C4C2F7D8}</ProjectGuid>
     <RootNamespace>Nebula</RootNamespace>

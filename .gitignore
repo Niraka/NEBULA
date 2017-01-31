@@ -50,6 +50,7 @@ Temporary Items
 *.suo
 *.opendb
 *.db
+Old/
 Temp/
 Build/
 GoogleTest/
