@@ -1,7 +1,7 @@
 /**
 A forward iterator for an indexed array.
 
-@date edited 05/01/2017
+@date edited 30/01/2017
 @date authored 10/12/2016
 
 @author Nathan Sainsbury */
@@ -11,22 +11,31 @@ A forward iterator for an indexed array.
 
 #include "Engine/System/Tools/IndexedArrayEntry.h"
 
-template <class ElementType, class IdType>
+template <class ElementType, class IndexType>
 class IndexedArrayIterator
 {
 	private:
-		typedef IndexedArrayIterator<ElementType, IdType> Iter;
-		IndexedArrayEntry<ElementType, IdType>* m_pElement;
+		typedef IndexedArrayIterator<ElementType, IndexType> Iter;
+		IndexedArrayEntry<ElementType, IndexType>* m_pFirst;
+		IndexedArrayEntry<ElementType, IndexType>* m_pLast;
+		IndexedArrayEntry<ElementType, IndexType>* m_pCurrent;
 
 	protected:
 
 	public:
 		/**
-		Constructs an iterator targeting the given element.
-		@param pElement The address of the element to target */
-		IndexedArrayIterator(IndexedArrayEntry<ElementType, IdType>* pElement)
+		Constructs an iterator targetting the given current element.
+		@param pFirst A pointer to the first element
+		@param pLast A pointer to the last element
+		@param pCurrent A pointer to the current element */
+		IndexedArrayIterator(
+			IndexedArrayEntry<ElementType, IndexType>* pFirst,
+			IndexedArrayEntry<ElementType, IndexType>* pLast,
+			IndexedArrayEntry<ElementType, IndexType>* pCurrent)
 		{
-			m_pElement = pElement;
+			m_pFirst = pFirst;
+			m_pLast = pLast;
+			m_pCurrent = pCurrent;
 		}
 
 		/**
@@ -34,7 +43,9 @@ class IndexedArrayIterator
 		@param other The iterator to copy */
 		IndexedArrayIterator(const Iter& other)
 		{
-			m_pElement = other.m_pElement;
+			m_pFirst = other.m_pFirst;
+			m_pLast = other.m_pLast;
+			m_pCurrent = other.m_pCurrent;
 		}
 
 		/**
@@ -43,7 +54,10 @@ class IndexedArrayIterator
 		@return A reference to this iterator */
 		Iter& operator=(const Iter& other)
 		{
-			m_pElement = other.m_pElement;
+			m_pFirst = other.m_pFirst;
+			m_pLast = other.m_pLast;
+			m_pCurrent = other.m_pCurrent;
+
 			return *this;
 		}
 
@@ -51,7 +65,9 @@ class IndexedArrayIterator
 		Destructs the iterator. */
 		~IndexedArrayIterator()
 		{
-			m_pElement = nullptr;
+			m_pFirst = nullptr;
+			m_pLast = nullptr;
+			m_pCurrent = nullptr;
 		}
 
 		/**
@@ -60,9 +76,18 @@ class IndexedArrayIterator
 		@return A copy of the iterator */
 		Iter operator++(int)
 		{
-			Iter temp = *this;
-			++m_pElement;
-			return temp;
+			if (m_pCurrent != m_pLast)
+			{
+				Iter temp = *this;
+				++m_pCurrent;
+				while (m_pCurrent != m_pLast && !m_pCurrent->bActive)
+				{
+					++m_pCurrent;
+				}
+				return temp;
+			}
+
+			return *this;
 		}
 
 		/**
@@ -70,7 +95,15 @@ class IndexedArrayIterator
 		@return A reference to this iterator */
 		Iter& operator++()
 		{
-			++m_pElement;
+			if (m_pCurrent != m_pLast)
+			{
+				++m_pCurrent;
+				while (m_pCurrent != m_pLast && !m_pCurrent->bActive)
+				{
+					++m_pCurrent;
+				}
+			}
+
 			return *this;
 		}
 
@@ -80,9 +113,18 @@ class IndexedArrayIterator
 		@return A copy of the iterator */
 		Iter operator--(int)
 		{
-			Iter temp = *this;
-			--m_pElement;
-			return temp;
+			if (m_pCurrent != m_pFirst)
+			{
+				Iter temp = *this;
+				--m_pCurrent;
+				while (m_pCurrent != m_pFirst && !m_pCurrent->bActive)
+				{
+					--m_pCurrent;
+				}
+				return temp;
+			}
+
+			return *this;
 		}
 
 		/**
@@ -90,7 +132,15 @@ class IndexedArrayIterator
 		@return A reference to this iterator */
 		Iter& operator--()
 		{
-			--m_pElement;
+			if (m_pCurrent != m_pFirst)
+			{
+				--m_pCurrent;
+				while (m_pCurrent != m_pFirst && !m_pCurrent->bActive)
+				{
+					--m_pCurrent;
+				}
+			}
+
 			return *this;
 		}
 
@@ -100,7 +150,7 @@ class IndexedArrayIterator
 		@return True if the iterators are considered equal, false if they are not */
 		bool operator==(const Iter& other)
 		{
-			return m_pElement == other.m_pElement;
+			return m_pCurrent == other.m_pCurrent;
 		}
 
 		/**
@@ -109,7 +159,7 @@ class IndexedArrayIterator
 		@return True if the iterators are not considered equal, false if they are */
 		bool operator!=(const Iter& other)
 		{
-			return m_pElement != other.m_pElement;
+			return m_pCurrent != other.m_pCurrent;
 		}
 
 		/**
@@ -118,7 +168,7 @@ class IndexedArrayIterator
 		@return A reference to an element */
 		ElementType& operator*()
 		{
-			return (*m_pElement).data;
+			return m_pCurrent->data;
 		}
 
 		/**
@@ -127,22 +177,24 @@ class IndexedArrayIterator
 		@return A reference to an element */
 		ElementType* operator->()
 		{
-			return &(m_pElement->data);
+			return &(m_pCurrent->data);
 		}
 
 		/**
-		Moves the iterator to the next element. */
+		Moves the iterator to the next element.
+		@return A reference to the iterator */
 		Iter& next()
 		{
-			++m_pElement;
+			++m_pCurrent;
 			return *this;
 		}
 
 		/**
-		Moves the iterator to the previous element. */
+		Moves the iterator to the previous element.
+		@return A reference to the iterator */
 		Iter& prev()
 		{
-			--m_pElement;
+			--m_pCurrent;
 			return *this;
 		}
 };

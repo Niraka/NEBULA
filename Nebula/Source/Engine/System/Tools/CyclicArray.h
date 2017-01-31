@@ -4,11 +4,17 @@ A cyclic array is an extension upon a tracked array that tracks an active index.
 The active index can be modified with calls to next(), previous() and reset() and can be used to
 retrieve a particular element via a parameter-less call to get().
 
+Elements must be:
+- Non-const
+- Default constructible
+- Copy assignable
+- Copy constructible
+
 @see Array
 @see TrackedArray
 @see IndexedArray
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 12/10/2016
 
 @author Nathan Sainsbury */
@@ -77,6 +83,15 @@ class CyclicArray
 		Constructor. */
 		CyclicArray()
 		{
+			static_assert(!std::is_const<ElementType>::value, "CyclicArray does not support const "
+				"element types");
+			static_assert(std::is_default_constructible<ElementType>::value, "CyclicArray "
+				"requires elements to be default constructible");
+			static_assert(std::is_copy_constructible<ElementType>::value, "CyclicArray requires "
+				"elements to be copy constructible");
+			static_assert(std::is_copy_assignable<ElementType>::value, "CyclicArray requires "
+				"elements to be copy assignable");
+
 			reset();
 		}
 
@@ -841,27 +856,35 @@ class CyclicArray
 		}
 
 		/**
-		Checks whether the container is empty.
-		@return True if it is empty, false otherwise */
+		Queries whether the container is empty.
+		@return True if the container is empty, false if it is not */
 		bool isEmpty() const
 		{
 			return m_iNumElements == 0;
 		}
 
 		/**
-		Checks whether the container is not empty.
-		@return True if it is not empty, false otherwise */
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
 		bool isNotEmpty() const
 		{
 			return m_iNumElements != 0;
 		}
 
 		/**
-		Checks whether the container is full.
-		@return True if it is full, false otherwise */
+		Queries whether the container is full.
+		@return True if the container is full, false if it is not */
 		bool isFull() const
 		{
 			return m_iNumElements == m_iMaxElements;
+		}
+
+		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_iNumElements != m_iMaxElements;
 		}
 
 		/**

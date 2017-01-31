@@ -22,7 +22,7 @@ Elements must be:
 @see Vector
 @see CyclicVector
 
-@date edited 29/01/2017
+@date edited 30/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -98,21 +98,18 @@ class IndexedVector
 		Constructs an indexed vector with a size and growth of 5 . */
 		IndexedVector()
 		{
-			static_assert(!std::is_const<ElementType>::value, "Indexed Vector does not support "
+			static_assert(!std::is_const<ElementType>::value, "IndexedVector does not support "
 				"const element types");
-			static_assert(std::is_default_constructible<ElementType>::value, "Indexed Vector "
+			static_assert(std::is_default_constructible<ElementType>::value, "IndexedVector "
 				"requires elements to be default constructible");
-			static_assert(std::is_copy_constructible<ElementType>::value, "Indexed Vector "
+			static_assert(std::is_copy_constructible<ElementType>::value, "IndexedVector "
 				"requires elements to be copy constructible");
-			static_assert(std::is_copy_assignable<ElementType>::value, "Indexed Vector requires "
+			static_assert(std::is_copy_assignable<ElementType>::value, "IndexedVector requires "
 				"elements to be copy assignable");
 
 			m_pData = nullptr;
 			m_iMaxElements = 5;
 			m_iGrowth = 5;
-			m_iLowestElement = 0;
-			m_iHighestElement = 0;
-			m_iHighestElementPlusOne = 0;
 
 			reset();
 		}
@@ -125,9 +122,6 @@ class IndexedVector
 			m_pData = nullptr;
 			m_iMaxElements = iCapacity;
 			m_iGrowth = 5;
-			m_iLowestElement = 0;
-			m_iHighestElement = 0;
-			m_iHighestElementPlusOne = 0;
 
 			reset();
 		}
@@ -141,9 +135,6 @@ class IndexedVector
 			m_pData = nullptr;
 			m_iMaxElements = iCapacity;
 			m_iGrowth = iGrowth;
-			m_iLowestElement = 0;
-			m_iHighestElement = 0;
-			m_iHighestElementPlusOne = 0;
 
 			reset();
 		}
@@ -277,8 +268,9 @@ class IndexedVector
 		/**
 		Pops the last element off of the vector. If the vector was empty, no action is taken. Note
 		that this function only flags the element as free. Use popAndReset to actually delete the
-		element. */
-		void pop()
+		element.
+		@return True if an element was removed, false otherwise */
+		bool pop()
 		{
 			if (m_iNumElements > 0)
 			{
@@ -299,12 +291,17 @@ class IndexedVector
 						--m_iHighestElement;
 					}
 				}
+
+				return true;
 			}
+
+			return false;
 		}
 
 		/**
-		Pops the last element off of the vector. If the vector was empty, no action is taken. */
-		void popAndReset()
+		Pops the last element off of the vector. If the vector was empty, no action is taken. 
+		@return True if an element was removed, false otherwise */
+		bool popAndReset()
 		{
 			if (m_iNumElements > 0)
 			{
@@ -326,7 +323,11 @@ class IndexedVector
 						--m_iHighestElement;
 					}
 				}
+
+				return true;
 			}
+
+			return false;
 		}
 
 		/**
@@ -425,8 +426,6 @@ class IndexedVector
 
 				m_pData[iIndex].data = element;
 				++m_pData[iIndex].version;
-
-
 				return Id<IndexType>(iIndex, m_pData[iIndex].version);
 			}
 
@@ -519,30 +518,57 @@ class IndexedVector
 		}
 
 		/**
-		Removes the element at the given index. If no such element existed, no action is taken. 
-		Note that the elements are not actually removed and are instead just flagged as 
-		available space.
-		@param iIndex The index of the element to remove
+		Removes an element with the given id. Note that the element is only flagged as removed and
+		is not actually removed. Use removeAndReset to actually remove the element.
+		@param id The id of the element to remove
 		@return The number of elements removed, which is at most 1 */
-		IndexType remove(IndexType iIndex)
+		IndexType remove(const Id<IndexType>& id)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iIndex >= m_iMaxElements)
+			if (id.index >= m_iMaxElements)
 			{
 				fatalexit("Out of bounds indexed vector access. Max index: " +
 					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
-					+ std::to_string(iIndex));
+					+ std::to_string(id.index));
 			}
 			#endif
 
-			if (m_pData[iIndex].bActive)
+			if (m_pData[id.index].version == id.version)
 			{
-				m_pData[iIndex].bActive = false;
-				++m_pData[iIndex].version;
+				++m_pData[id.index].version;
+				m_pData[id.index].bActive = false;
 				--m_iNumElements;
 
-				resolveLowHighOnRemoval(iIndex);
+				resolveLowHighOnRemoval(id.index);
+				return (IndexType)1;
+			}
 
+			return (IndexType)0;
+		}
+
+		/**
+		Removes and resets an element with the given id.
+		@param id The id of the element to remove
+		@return The number of elements removed, which is at most 1 */
+		IndexType removeAndReset(const Id<IndexType>& id)
+		{
+			#ifdef NEB_USE_CONTAINER_CHECKS
+			if (id.index >= m_iMaxElements)
+			{
+				fatalexit("Out of bounds indexed vector access. Max index: " +
+					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
+					+ std::to_string(id.index));
+			}
+			#endif
+
+			if (m_pData[id.index].version == id.version)
+			{
+				m_pData[id.index].data = ElementType();
+				++m_pData[id.index].version;
+				m_pData[id.index].bActive = false;
+				--m_iNumElements;
+
+				resolveLowHighOnRemoval(id.index);
 				return (IndexType)1;
 			}
 
@@ -614,37 +640,6 @@ class IndexedVector
 			}
 
 			return iRemovalCount;
-		}
-
-		/**
-		Removes and resets the element at the given index. If no such element existed, no action is
-		taken.
-		@param iIndex The index of the element to remove
-		@return The number of elements removed, which is at most 1 */
-		IndexType removeAndReset(IndexType iIndex)
-		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iIndex >= m_iMaxElements)
-			{
-				fatalexit("Out of bounds indexed vector access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: "
-					+ std::to_string(iIndex));
-			}
-			#endif
-
-			if (m_pData[iIndex].bActive)
-			{
-				m_pData[iIndex].bActive = false;
-				m_pData[iIndex].data = ElementType();
-				++m_pData[iIndex].version;
-				--m_iNumElements;
-
-				resolveLowHighOnRemoval(iIndex);
-
-				return (IndexType)1;
-			}
-
-			return (IndexType)0;
 		}
 
 		/**
@@ -733,32 +728,6 @@ class IndexedVector
 			m_iLowestElement = 0;
 			m_iHighestElement = 0;
 			m_iHighestElementPlusOne = 0;
-		}
-
-		/**
-		Replaces each instance of the first given element with a copy of the second given element.
-		@param first The element to replace
-		@param second The element to replace with
-		@return The number of elements that were replaced */
-		IndexType replace(const ElementType& first, const ElementType& second)
-		{
-			IndexType iReplaceCount = 0;
-
-			for (IndexType iCurrentIndex = m_iLowestElement; 
-				iCurrentIndex < m_iHighestElementPlusOne; 
-				++iCurrentIndex)
-			{
-				if (m_pData[iCurrentIndex].bActive)
-				{
-					if (m_pData[iCurrentIndex].data == first)
-					{
-						m_pData[iCurrentIndex].data = second;
-						++iReplaceCount;
-					}
-				}		
-			}
-
-			return iReplaceCount;
 		}
 
 		/**
@@ -913,7 +882,9 @@ class IndexedVector
 		@return An iterator targetting the first element in the vector */
 		Iterator begin() const
 		{
-			return Iterator(&m_pData[m_iLowestElement], &m_pData[m_iHighestElementPlusOne], &m_pData[m_iLowestElement]);
+			return Iterator(&m_pData[m_iLowestElement], 
+				&m_pData[m_iHighestElementPlusOne], 
+				&m_pData[m_iLowestElement]);
 		}
 
 		/**
@@ -922,7 +893,9 @@ class IndexedVector
 		@return An iterator targetting the theoretical element one past the last element */
 		Iterator end() const
 		{
-			return Iterator(&m_pData[m_iLowestElement], &m_pData[m_iHighestElementPlusOne], &m_pData[m_iHighestElementPlusOne]);
+			return Iterator(&m_pData[m_iLowestElement], 
+				&m_pData[m_iHighestElementPlusOne], 
+				&m_pData[m_iHighestElementPlusOne]);
 		}
 
 		/**
@@ -931,7 +904,9 @@ class IndexedVector
 		@return A const iterator targetting the first element in the vector */
 		ConstIterator cbegin() const
 		{
-			return ConstIterator(&m_pData[m_iLowestElement], &m_pData[m_iHighestElementPlusOne], &m_pData[m_iLowestElement]);
+			return ConstIterator(&m_pData[m_iLowestElement], 
+				&m_pData[m_iHighestElementPlusOne], 
+				&m_pData[m_iLowestElement]);
 		}
 
 		/**
@@ -940,7 +915,9 @@ class IndexedVector
 		@return A const iterator targetting the theoretical element one past the last element */
 		ConstIterator cend() const
 		{
-			return ConstIterator(&m_pData[m_iLowestElement], &m_pData[m_iHighestElementPlusOne], &m_pData[m_iHighestElementPlusOne]);
+			return ConstIterator(&m_pData[m_iLowestElement], 
+				&m_pData[m_iHighestElementPlusOne], 
+				&m_pData[m_iHighestElementPlusOne]);
 		}
 };
 

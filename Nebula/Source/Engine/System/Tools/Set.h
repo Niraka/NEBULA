@@ -1,7 +1,7 @@
 /**
 A standard set.
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -39,21 +39,21 @@ class Set
 		/**
 		Constructs an empty set with the given maximum number of elements. 
 		@param uiMaxElements The maximum elements */
-		Set(unsigned int uiMaxElements)
+		Set(std::uint32_t uiMaxElements)
 		{
 			reset();
 			setMaxElements(uiMaxElements);
 		}
 
-		/**
-		Destructs all elements. Functionally equivalent to clear. */
+		/**		
+		Resets the container to its default state. */
 		void reset()
 		{
 			m_tree.reset();
 		}
 
 		/**
-		Destructs all elements. Functionally equivalent to reset. */
+		Destructs all elements. */
 		void clear()
 		{
 			m_tree.clear();
@@ -64,7 +64,7 @@ class Set
 		function will not remove elements from the set should the maximum be set to less than the
 		current number of elements.
 		@param uiMax The maximum number of elements */
-		void setMaxElements(unsigned int uiMax)
+		void setMaxElements(std::uint32_t uiMax)
 		{
 			m_tree.setMaxElements(uiMax);
 		}
@@ -72,7 +72,7 @@ class Set
 		/**
 		Retrieves the maximum number of elements that the set can contain at any one time.
 		@return The maximum number of elements */
-		unsigned int maxElements() const
+		std::uint32_t maxElements() const
 		{
 			return m_tree.maxElements();
 		}
@@ -80,7 +80,7 @@ class Set
 		/**
 		Returns the current number of elements that the set contains.
 		@return The current number of elements */
-		unsigned int numElements() const
+		std::uint32_t numElements() const
 		{
 			return m_tree.numElements();
 		}
@@ -181,6 +181,38 @@ class Set
 		bool remove(const ElementType& element)
 		{
 			return m_tree.remove(element);
+		}
+
+		/**
+		Queries whether the container is empty.
+		@return True if the container is empty, false if it is not */
+		bool isEmpty() const
+		{
+			return m_tree.isEmpty();
+		}
+
+		/**
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
+		bool isNotEmpty() const
+		{
+			return m_tree.isNotFull();
+		}
+
+		/**
+		Queries whether the container is full.
+		@return True if the container is full, false if it is not */
+		bool isFull() const
+		{
+			return m_tree.isFull();
+		}
+
+		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_tree.isNotFull();
 		}
 
 		/**

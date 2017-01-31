@@ -4,11 +4,17 @@ A tracked array is a fixed size container that tracks whether elements are in us
 This is done by assigning a boolean to each element to determine whether the index is in use. The
 current number of elements is also tracked for convenience.
 
+Elements must be:
+- Non-const
+- Default constructible
+- Copy assignable
+- Copy constructible
+
 @see Array
 @see IndexedArray
 @see CyclicArray
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -42,6 +48,15 @@ class TrackedArray
 		Constructor. */
 		TrackedArray()
 		{
+			static_assert(!std::is_const<ElementType>::value, "TrackedArray does not support const " 
+				"element types");
+			static_assert(std::is_default_constructible<ElementType>::value, "TrackedArray "
+				"requires elements to be default constructible");
+			static_assert(std::is_copy_constructible<ElementType>::value, "TrackedArray requires "
+				"elements to be copy constructible");
+			static_assert(std::is_copy_assignable<ElementType>::value, "TrackedArray requires "
+				"elements to be copy assignable");
+
 			reset();
 		}
 
@@ -55,8 +70,7 @@ class TrackedArray
 		Resets the container. All elements are removed. */
 		void reset()
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				m_data[iCurrentIndex].first = ElementType();
 				m_data[iCurrentIndex].second = false;
@@ -72,8 +86,7 @@ class TrackedArray
 		@return True if an element was appended, false otherwise */
 		bool push(const ElementType& element)
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
 			{
 				if (!m_data[iCurrentIndex].second)
 				{
@@ -705,33 +718,41 @@ class TrackedArray
 		}
 
 		/**
-		Checks whether the container is empty. 
-		@return True if it is empty, false otherwise */
+		Queries whether the container is empty. 
+		@return True if the container is empty, false if it is not */
 		bool isEmpty() const
 		{
 			return m_iNumElements == 0;
 		}
 
 		/**
-		Checks whether the container is not empty.
-		@return True if it is not empty, false otherwise */
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
 		bool isNotEmpty() const
 		{
 			return m_iNumElements != 0;
 		}
 	
 		/**
-		Checks whether the container is full. 
-		@return True if it is full, false otherwise */
+		Queries whether the container is full. 
+		@return True if the container is full, false if it is not */
 		bool isFull() const
 		{
 			return m_iNumElements == m_iMaxElements;
 		}
 
 		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_iNumElements != m_iMaxElements;
+		}
+
+		/**
 		Creates an iterator targetting the first element in the array.
 		@return An iterator targetting the first element in the array */
-		Iterator begin() const
+		Iterator begin()
 		{
 			return Iterator(&m_data[0]);
 		}
@@ -740,7 +761,7 @@ class TrackedArray
 		Creates an iterator targetting the theoretical element one past the last element in the
 		array.
 		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end() const
+		Iterator end()
 		{
 			return Iterator(&m_data[m_iMaxElements]);
 		}

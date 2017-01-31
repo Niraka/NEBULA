@@ -1,7 +1,7 @@
 /**
 A const forward iterator for a vector.
 
-@date edited 05/01/2017
+@date edited 31/01/2017
 @date authored 18/12/2016
 
 @author Nathan Sainsbury */
@@ -129,7 +129,8 @@ class VectorConstIterator
 		}
 
 		/**
-		Moves the iterator to the next element. */
+		Moves the iterator to the next element. 
+		@return A reference to the iterator */
 		Iter& next()
 		{
 			++m_pElement;
@@ -137,7 +138,8 @@ class VectorConstIterator
 		}
 
 		/**
-		Moves the iterator to the previous element. */
+		Moves the iterator to the previous element. 
+		@return A reference to the iterator */
 		Iter& prev()
 		{
 			--m_pElement;

@@ -1,7 +1,7 @@
 /**
 A const forward iterator for red-black trees.
 
-@date edited 05/01/2017
+@date edited 31/01/2017
 @date authored 18/12/2016
 
 @author Nathan Sainsbury */
@@ -197,7 +197,8 @@ class RBTreeConstIterator
 		}
 
 		/**
-		Moves the iterator to the next element. */
+		Moves the iterator to the next element. 
+		@return A reference to the iterator */
 		Iter& next()
 		{
 			++*this;
@@ -205,7 +206,8 @@ class RBTreeConstIterator
 		}
 
 		/**
-		Moves the iterator to the previous element. */
+		Moves the iterator to the previous element. 
+		@return A reference to the iterator */
 		Iter& prev()
 		{
 			--*this;

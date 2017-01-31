@@ -1,7 +1,7 @@
 /**
 A forward iterator for an indexed vector.
 
-@date edited 29/01/2017
+@date edited 30/01/2017
 @date authored 18/12/2016
 
 @author Nathan Sainsbury */
@@ -181,7 +181,8 @@ class IndexedVectorIterator
 		}
 
 		/**
-		Moves the iterator to the next element. */
+		Moves the iterator to the next element.  
+		@return A reference to the iterator */
 		Iter& next()
 		{
 			++m_pCurrent;
@@ -189,7 +190,8 @@ class IndexedVectorIterator
 		}
 
 		/**
-		Moves the iterator to the previous element. */
+		Moves the iterator to the previous element.  
+		@return A reference to the iterator */
 		Iter& prev()
 		{
 			--m_pCurrent;

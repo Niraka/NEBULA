@@ -1,7 +1,7 @@
 /**
 A standard map.
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 10/11/2016
 
 @author Nathan Sainsbury */
@@ -47,21 +47,21 @@ class Map
 		/**
 		Constructs an empty map with the given maximum number of elements.
 		@param uiMaxElements The maximum elements */
-		Map(unsigned int uiMaxElements)
+		Map(std::uint32_t uiMaxElements)
 		{
 			reset();
 			setMaxElements(uiMaxElements);
 		}
 
 		/**
-		Destructs all elements. Functionally equivalent to clear. */
+		Resets the container to its default state. */
 		void reset()
 		{
 			m_tree.reset();
 		}
 
 		/**
-		Destructs all elements. Functionally equivalent to reset. */
+		Destructs all elements. */
 		void clear()
 		{
 			m_tree.clear();
@@ -72,7 +72,7 @@ class Map
 		function will not remove elements from the map should the maximum be set to less than the
 		current number of elements.
 		@param uiMax The maximum number of elements */
-		void setMaxElements(unsigned int uiMax)
+		void setMaxElements(std::uint32_t uiMax)
 		{
 			m_tree.setMaxElements(uiMax);
 		}
@@ -80,7 +80,7 @@ class Map
 		/**
 		Retrieves the maximum number of elements that the map can contain at any one time.
 		@return The maximum number of elements */
-		unsigned int maxElements() const
+		std::uint32_t maxElements() const
 		{
 			return m_tree.maxElements();
 		}
@@ -88,7 +88,7 @@ class Map
 		/**
 		Returns the current number of elements that the map contains.
 		@return The current number of elements */
-		unsigned int numElements() const
+		std::uint32_t numElements() const
 		{
 			return m_tree.numElements();
 		}
@@ -116,6 +116,38 @@ class Map
 		}
 
 		/**
+		Queries whether the container is empty.
+		@return True if the container is empty, false if it is not */
+		bool isEmpty() const
+		{
+			return m_tree.isEmpty();
+		}
+
+		/**
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
+		bool isNotEmpty() const
+		{
+			return m_tree.isNotFull();
+		}
+
+		/**
+		Queries whether the container is full.
+		@return True if the container is full, false if it is not */
+		bool isFull() const
+		{
+			return m_tree.isFull();
+		}
+
+		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_tree.isNotFull();
+		}
+
+		/**
 		Searches for and returns a pointer to a value within the map. If the key-value mapping 
 		could not be found, a nullptr is returned instead.
 		@param key The key to search for
@@ -123,7 +155,7 @@ class Map
 		@see get */
 		ValueType* tryToGet(const KeyType& key)
 		{
-			Pair<KeyType, ValueType>* pRet = m_tree.tryToGet(key);
+			Pair<const KeyType, ValueType>* pRet = m_tree.tryToGet(key);
 			if (notnullptr(pRet))
 			{
 				return &pRet->second;
@@ -199,7 +231,7 @@ class Map
 		{
 			if (m_tree.insert(Pair<const KeyType, ValueType>(key, ValueType())))
 			{
-				return *m_tree.get(key);
+				return &m_tree.get(key).second;
 			}
 			else
 			{
@@ -220,7 +252,7 @@ class Map
 		{
 			if (m_tree.insert(Pair<const KeyType, ValueType>(key, value)))
 			{
-				return &m_tree.get(key);
+				return &m_tree.get(key).second;
 			}
 			else
 			{

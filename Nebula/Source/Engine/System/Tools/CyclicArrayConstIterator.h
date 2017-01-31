@@ -1,7 +1,7 @@
 /**
 A const forward iterator for a cyclic array.
 
-@date edited 05/01/2017
+@date edited 30/01/2017
 @date authored 10/12/2016
 
 @author Nathan Sainsbury */
@@ -16,7 +16,7 @@ class CyclicArrayConstIterator
 {
 	private:
 		typedef CyclicArrayConstIterator<ElementType> Iter;
-		Pair<ElementType, bool>* m_pElement;
+		const Pair<ElementType, bool>* m_pElement;
 
 	protected:
 
@@ -24,7 +24,7 @@ class CyclicArrayConstIterator
 		/**
 		Constructs an iterator targeting the given element.
 		@param pElement The address of the element to target */
-		CyclicArrayConstIterator(Pair<ElementType, bool>* pElement)
+		CyclicArrayConstIterator(const Pair<ElementType, bool>* pElement)
 		{
 			m_pElement = pElement;
 		}
@@ -131,7 +131,8 @@ class CyclicArrayConstIterator
 		}
 
 		/**
-		Moves the iterator to the next element. */
+		Moves the iterator to the next element. 
+		@return A reference to the iterator */
 		Iter& next()
 		{
 			++m_pElement;
@@ -139,7 +140,8 @@ class CyclicArrayConstIterator
 		}
 
 		/**
-		Moves the iterator to the previous element. */
+		Moves the iterator to the previous element. 
+		@return A reference to the iterator */
 		Iter& prev()
 		{
 			--m_pElement;

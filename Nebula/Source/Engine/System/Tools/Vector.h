@@ -4,7 +4,7 @@ A standard vector.
 @see IndexedVector
 @see CyclicVector
 
-@date edited 19/01/2017
+@date edited 31/01/2017
 @date authored 15/09/2016
 
 @author Nathan Sainsbury */
@@ -12,6 +12,7 @@ A standard vector.
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cstdint>
 #include <type_traits>
 
 #include "Engine/System/Tools/FakeParam.h"
@@ -20,10 +21,12 @@ A standard vector.
 #include "Engine/System/Tools/VectorIterator.h"
 #include "Engine/System/Tools/VectorConstIterator.h"
 
-template <class ElementType, class IndexType = unsigned int>
+template <class ElementType, class IndexType = std::uint32_t>
 class Vector
 {
 	private:
+		static const std::uint32_t m_iDefaultGrowth = 5;
+
 		ElementType* m_pData;
 		IndexType m_iNumElements;
 		IndexType m_iMaxElements;
@@ -39,9 +42,18 @@ class Vector
 		Constructs a vector of size 5. */
 		Vector()
 		{
+			static_assert(!std::is_const<ElementType>::value, "Vector does not support const "
+				"element types");
+			static_assert(std::is_default_constructible<ElementType>::value, "Vector requires "
+				"elements to be default constructible");
+			static_assert(std::is_copy_constructible<ElementType>::value, "Vector requires "
+				"elements to be copy constructible");
+			static_assert(std::is_copy_assignable<ElementType>::value, "Vector requires "
+				"elements to be copy assignable");
+
 			m_pData = nullptr;
 			m_iMaxElements = 5;
-			m_iGrowth = 5;
+			m_iGrowth = m_iDefaultGrowth;
 
 			reset();
 		}
@@ -53,7 +65,7 @@ class Vector
 		{
 			m_pData = nullptr;
 			m_iMaxElements = iCapacity;
-			m_iGrowth = 5;
+			m_iGrowth = m_iDefaultGrowth;
 
 			reset();
 		}
@@ -68,8 +80,7 @@ class Vector
 			m_iMaxElements = vec.m_iMaxElements;
 
 			m_pData = new ElementType[m_iMaxElements];
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				m_pData[iCurrentIndex] = vec.m_pData[iCurrentIndex];
 			}
@@ -90,8 +101,7 @@ class Vector
 			m_iMaxElements = vec.m_iMaxElements;
 
 			m_pData = new ElementType[m_iMaxElements];
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				m_pData[iCurrentIndex] = vec.m_pData[iCurrentIndex];
 			}
@@ -115,6 +125,7 @@ class Vector
 		void reset()
 		{
 			m_iNumElements = 0;
+			m_iGrowth = m_iDefaultGrowth;
 
 			if (m_pData)
 			{
@@ -128,8 +139,8 @@ class Vector
 		Appends an element to the vector. If the vector was full, it will expand to accomodate the
 		new element.
 		@param element The element to append 
-		@see pop
-		@see setGrowth */
+		@see pop()
+		@see setGrowth() */
 		void push(const ElementType& element)
 		{
 			if (m_iNumElements < m_iMaxElements)
@@ -147,7 +158,7 @@ class Vector
 
 		/**
 		Pops the last element off of the vector. If the vector was empty, no action is taken. Note
-		that this function only flags the element as free. Use popAndReset to actually delete the
+		that this function only flags the element as free. Use popAndReset to actually remove the
 		element. */
 		void pop()
 		{
@@ -163,20 +174,20 @@ class Vector
 		{
 			if (m_iNumElements > 0)
 			{
-				m_pData[m_iNumElements - 1] = ElementType();
 				--m_iNumElements;
+				m_pData[m_iNumElements] = ElementType();		
 			}
 		}
 
 		/**
 		Reserves memory for at least the given number of elements. If the target capacity is less
 		than the current maximum elements, no action is taken.
-		@param iCapacity The desired capacity */
-		void reserve(IndexType iCapacity)
+		@param iDesiredCapacity The desired capacity */
+		void reserve(IndexType iDesiredCapacity)
 		{
-			if (m_iMaxElements < iCapacity)
+			if (m_iMaxElements < iDesiredCapacity)
 			{
-				ElementType* pDataNew = new ElementType[iCapacity];
+				ElementType* pDataNew = new ElementType[iDesiredCapacity];
 				IndexType iCurrentIndex = 0;
 				for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 				{
@@ -185,7 +196,7 @@ class Vector
 
 				delete[] m_pData;
 				m_pData = pDataNew;
-				m_iMaxElements = iCapacity;
+				m_iMaxElements = iDesiredCapacity;
 			}
 		}
 
@@ -297,26 +308,25 @@ class Vector
 		}
 
 		/**
-		Removes and resets all elements in the given range. End index must be greater than the start
-		index.
+		Removes all elements in the given range. End index must be greater than the start index.
 		@param iStartIndex The start index (inclusive)
 		@param iEndIndex The end index (exclusive)
 		@return The number of elements removed */
 		IndexType removeRange(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iEndIndex >= m_iNumElements)
+			if (iEndIndex > m_iNumElements)
 			{
 				if (m_iNumElements > 0)
 				{
 					fatalexit("Out of bounds vector access. Max index: " +
 						std::to_string(m_iNumElements - 1) + ". Attempted access: "
-						+ std::to_string(iIndex));
+						+ std::to_string(iEndIndex));
 				}
 				else
 				{
 					fatalexit("Out of bounds vector access. Max index: 0"
-						". Attempted access: " + std::to_string(iIndex));
+						". Attempted access: " + std::to_string(iEndIndex));
 				}
 			}
 			if (iStartIndex >= iEndIndex)
@@ -329,8 +339,8 @@ class Vector
 			IndexType iRemovalCount = iEndIndex - iStartIndex;
 			m_iNumElements -= iRemovalCount;
 
-			IndexType iCurrentIndex = iStartIndex;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			// Copy elements down
+			for (IndexType iCurrentIndex = iStartIndex; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				m_pData[iCurrentIndex] = m_pData[iCurrentIndex + iRemovalCount];
 			}
@@ -347,18 +357,18 @@ class Vector
 		IndexType removeRangeAndReset(IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iEndIndex >= m_iNumElements)
+			if (iEndIndex > m_iNumElements)
 			{
 				if (m_iNumElements > 0)
 				{
 					fatalexit("Out of bounds vector access. Max index: " +
 						std::to_string(m_iNumElements - 1) + ". Attempted access: "
-						+ std::to_string(iIndex));
+						+ std::to_string(iEndIndex));
 				}
 				else
 				{
 					fatalexit("Out of bounds vector access. Max index: 0"
-						". Attempted access: " + std::to_string(iIndex));
+						". Attempted access: " + std::to_string(iEndIndex));
 				}
 			}
 			if (iStartIndex >= iEndIndex)
@@ -369,17 +379,24 @@ class Vector
 			#endif
 
 			IndexType iRemovalCount = iEndIndex - iStartIndex;
+			IndexType iElementsAbove = m_iNumElements - iEndIndex;
 			m_iNumElements -= iRemovalCount;
 
+			// Copy elements down
 			IndexType iCurrentIndex = iStartIndex;
 			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				m_pData[iCurrentIndex] = m_pData[iCurrentIndex + iRemovalCount];
 			}
-			iCurrentIndex = 0;
-			for (; iCurrentIndex < iRemovalCount; ++iCurrentIndex)
+
+			// Overwrite removed elements that werent overwritten by the copy down
+			if (iRemovalCount > iElementsAbove)
 			{
-				m_pData[iCurrentIndex + m_iNumElements] = ElementType();
+				iCurrentIndex = m_iNumElements;
+				for (; iCurrentIndex < m_iNumElements + iRemovalCount; ++iCurrentIndex)
+				{
+					m_pData[iCurrentIndex] = ElementType();
+				}
 			}
 
 			return iRemovalCount;
@@ -411,12 +428,14 @@ class Vector
 
 			if ((iIndex + 1) == m_iNumElements)
 			{
+				// Remove last element
 				--m_iNumElements;
 				m_pData[iIndex] = ElementType();
 				return (IndexType)1;
 			}
 			else if (iIndex < m_iNumElements)
 			{
+				// Remove from anywhere that isnt the last element
 				--m_iNumElements;
 
 				IndexType iCurrentIndex = iIndex;
@@ -439,8 +458,7 @@ class Vector
 		@return The number of elements removed, which is at most 1 */
 		IndexType removeAndReset(const ElementType& element)
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				if (m_pData[iCurrentIndex] == element)
 				{
@@ -519,8 +537,7 @@ class Vector
 		IndexType replace(const ElementType& first, const ElementType& second)
 		{
 			IndexType iReplaceCount = 0;
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				if (m_pData[iCurrentIndex] == first)
 				{
@@ -544,7 +561,7 @@ class Vector
 			IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iEndIndex >= m_iNumElements)
+			if (iEndIndex > m_iNumElements)
 			{
 				if (m_iNumElements > 0)
 				{
@@ -566,12 +583,11 @@ class Vector
 			#endif
 
 			IndexType iReplaceCount = 0;
-			IndexType iCurrentIndex = iStartIndex;
 			if (iEndIndex > m_iNumElements)
 			{
 				m_iNumElements += iEndIndex - m_iNumElements;
 			}
-			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = iStartIndex; iCurrentIndex < iEndIndex; ++iCurrentIndex)
 			{
 				if (m_pData[iCurrentIndex] == first)
 				{
@@ -606,7 +622,7 @@ class Vector
 		void fillRange(const ElementType& element, IndexType iStartIndex, IndexType iEndIndex)
 		{
 			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iEndIndex >= m_iNumElements)
+			if (iEndIndex > m_iNumElements)
 			{
 				if (m_iNumElements > 0)
 				{
@@ -631,8 +647,7 @@ class Vector
 			{
 				m_iNumElements += iEndIndex - m_iNumElements;
 			}
-			IndexType iCurrentIndex = iStartIndex;
-			for (; iCurrentIndex < iEndIndex; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = iStartIndex; iCurrentIndex < iEndIndex; ++iCurrentIndex)
 			{
 				m_pData[iCurrentIndex] = element;
 			}
@@ -666,8 +681,7 @@ class Vector
 			// Function disabled for pointer types. Allows the user to search for a 
 			// specific element instead of any element that compares equal.
 		
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				if (&m_pData[iCurrentIndex] == pElement)
 				{
@@ -686,8 +700,7 @@ class Vector
 		IndexType count(const ElementType& element) const
 		{
 			IndexType iCount = 0;
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
+			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iNumElements; ++iCurrentIndex)
 			{
 				if (m_pData[iCurrentIndex] == element)
 				{
@@ -712,6 +725,38 @@ class Vector
 		IndexType maxElements() const
 		{
 			return m_iMaxElements;
+		}
+
+		/**
+		Queries whether the container is empty.
+		@return True if the container is empty, false if it is not */
+		bool isEmpty() const
+		{
+			return m_iNumElements == 0;
+		}
+
+		/**
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
+		bool isNotEmpty() const
+		{
+			return m_iNumElements != 0;
+		}
+
+		/**
+		Queries whether the container is full.
+		@return True if the container is full, false if it is not */
+		bool isFull() const
+		{
+			return m_iNumElements == m_iMaxElements;
+		}
+
+		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_iNumElements != m_iMaxElements;
 		}
 
 		/**

@@ -4,7 +4,7 @@ A red-black tree.
 The tree possesses a single element cache that is populated by the last accessed/modified element
 so that consecutive uses of a single element are quicker.
 
-@date edited 19/01/2017
+@date edited 30/01/2017
 @date authored 19/10/2016
 
 @author Nathan Sainsbury */
@@ -12,6 +12,7 @@ so that consecutive uses of a single element are quicker.
 #ifndef RB_TREE_H
 #define RB_TREE_H
 
+#include <cstdint>
 #include <limits.h>
 #include <type_traits>
 
@@ -33,8 +34,8 @@ class RBTree
 		RBTreeNode<ElementType>* m_pHeadNode;
 		RBTreeNode<ElementType>* m_pCachedElement;
 		RBTreeNode<ElementType>* m_pLeftMost;
-		unsigned int m_uiNumElements;
-		unsigned int m_uiMaxElements;
+		std::uint32_t m_uiNumElements;
+		std::uint32_t m_uiMaxElements;
 		Comparator m_comparator;
 		ElementBuilder m_elementBuilder;
 
@@ -714,7 +715,7 @@ class RBTree
 		RBTree()
 		{
 			m_uiNumElements = 0;
-			m_uiMaxElements = std::numeric_limits<unsigned int>::max();
+			m_uiMaxElements = std::numeric_limits<std::uint32_t>::max();
 
 			m_pRootNode = nullptr;
 			m_pHeadNode = nullptr;
@@ -785,23 +786,27 @@ class RBTree
 		~RBTree()
 		{
 			delete m_pRootNode;
+
+			m_pHeadNode->pLeftChild = nullptr;
+			m_pHeadNode->pRightChild = nullptr;
 			delete m_pHeadNode;
 		}
 
 		/**
-		Destructs all elements. Functionally equivalent to clear. */
+		Resets the container to its default state. */
 		void reset()
 		{
 			delete m_pRootNode;
 			m_pRootNode = nullptr;
 
+			m_uiMaxElements = std::numeric_limits<std::uint32_t>::max();
 			m_uiNumElements = 0;
 			m_pCachedElement = nullptr;
 			m_pLeftMost = nullptr;
 		}
 
 		/**
-		Destructs all elements. Functionally equivalent to reset. */
+		Destructs all elements. */
 		void clear()
 		{
 			delete m_pRootNode;
@@ -816,7 +821,7 @@ class RBTree
 		Sets the maximum number of elements that the tree may contain. This function will not
 		remove elements if the maximum is set to below the current number of elements.
 		@param uiMax The desired maximum */
-		void setMaxElements(unsigned int uiMax)
+		void setMaxElements(std::uint32_t uiMax)
 		{
 			m_uiMaxElements = uiMax;
 		}
@@ -824,7 +829,7 @@ class RBTree
 		/**
 		Returns the maximum number of elements that the tree may contain.
 		@return The maximum number of elements */
-		unsigned int maxElements() const
+		std::uint32_t maxElements() const
 		{
 			return m_uiMaxElements;
 		}
@@ -832,7 +837,7 @@ class RBTree
 		/**
 		Returns the current number of elements that the tree contains.
 		@return The current number of elements */
-		unsigned int numElements() const
+		std::uint32_t numElements() const
 		{
 			return m_uiNumElements;
 		}
@@ -1077,6 +1082,38 @@ class RBTree
 			{
 				return performRemoval(key);
 			}
+		}
+
+		/**
+		Queries whether the container is empty.
+		@return True if the container is empty, false if it is not */
+		bool isEmpty() const
+		{
+			return m_uiNumElements == 0;
+		}
+
+		/**
+		Queries whether the container is not empty.
+		@return True if the container is not empty, false if it is not */
+		bool isNotEmpty() const
+		{
+			return m_uiNumElements != 0;
+		}
+
+		/**
+		Queries whether the container is full.
+		@return True if the container is full, false if it is not */
+		bool isFull() const
+		{
+			return m_uiNumElements == m_uiMaxElements;
+		}
+
+		/**
+		Queries whether the container is not full.
+		@return True if the container is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_uiNumElements != m_uiMaxElements;
 		}
 
 		/**
