@@ -2,6 +2,7 @@
 
 Engine::Engine()
 {
+	m_layers = Vector<Layer*>(4);
 }
 
 Engine::Engine(const Engine& other)
@@ -25,14 +26,14 @@ Engine::~Engine()
 
 bool Engine::startUp()
 {
-	m_layers.push(new SystemLayer());
-	m_layers.push(new ResourceLayer());
-	m_layers.push(new ModuleLayer());
-	m_layers.push(new ContentLayer());
+	m_layers.push(&m_systemLayer);
+	m_layers.push(&m_resourceLayer);
+	m_layers.push(&m_moduleLayer);
+	m_layers.push(&m_contentLayer);
 
-	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
+	for (Layer* pLayer : m_layers)
 	{
-		if (m_layers.get(ui)->startUp() == LayerResponses::START_UP_FAILED)
+		if (pLayer->startLayerUp() == LayerResponses::START_UP_FAILED)
 		{
 			return false;
 		}
@@ -43,17 +44,12 @@ bool Engine::startUp()
 
 bool Engine::shutDown()
 {
-	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
+	for (Layer* pLayer : m_layers)
 	{
-		if (m_layers.get(ui)->shutDown() == LayerResponses::SHUT_DOWN_FAILED)
+		if (pLayer->shutLayerDown() == LayerResponses::SHUT_DOWN_FAILED)
 		{
 			return false;
 		}
-	}
-	
-	for (unsigned int ui = 0; ui < m_layers.numElements(); ++ui)
-	{
-		delete m_layers.get(ui);
 	}
 	m_layers.clear();
 
@@ -62,4 +58,6 @@ bool Engine::shutDown()
 
 void Engine::run()
 {
+	// Wont enable this for now since there is no way to stop it yet
+	// m_systemLayer.startScheduler();
 }

@@ -1,17 +1,17 @@
 /**
-The system layer.
+The content layer.
 
 @date edited 10/09/2016
 @date authored 10/09/2016
 
 @author Nathan Sainsbury */
 
-#ifndef SYSTEM_LAYER_H
-#define SYSTEM_LAYER_H
+#ifndef CONTENT_LAYER_H
+#define CONTENT_LAYER_H
 
 #include "Engine/Layer/Layer.h"
 
-class SystemLayer : 
+class ContentLayer :
 	public Layer
 {
 	private:
@@ -20,18 +20,18 @@ class SystemLayer :
 
 	public:
 		/**
-		Constructs a system layer. */
-		SystemLayer();
+		Constructs a content layer. */
+		ContentLayer();
 
 		/**
-		Starts up the system layer.
+		Starts up the content layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses startUp();
+		LayerResponses startLayerUp();
 
 		/**
-		Shuts down the system layer.
+		Shuts down the content layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses shutDown();
+		LayerResponses shutLayerDown();
 };
 
 #endif

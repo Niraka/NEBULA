@@ -11,17 +11,21 @@ The engine.
 
 #include "Engine/System/Tools/Vector.h"
 #include "Engine/Layer/Layer.h"
-#include "Engine/Layer/SystemLayer.h"
-#include "Engine/Layer/ResourceLayer.h"
-#include "Engine/Layer/ModuleLayer.h"
-#include "Engine/Layer/ContentLayer.h"
+#include "Engine/Layer/System/SystemLayer.h"
+#include "Engine/Layer/Resource/ResourceLayer.h"
+#include "Engine/Layer/Module/ModuleLayer.h"
+#include "Engine/Layer/Content/ContentLayer.h"
 #include "Engine/EngineLimits.h"
 
 class Engine
 {
 	private:
 		Vector<Layer*> m_layers;
-		EngineLimits m_limits;
+		EngineLimits m_limits;	
+		SystemLayer m_systemLayer;
+		ResourceLayer m_resourceLayer;
+		ModuleLayer m_moduleLayer;
+		ContentLayer m_contentLayer;
 
 		/**
 		Forbidden. Engine limits should always be given. */

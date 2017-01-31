@@ -24,12 +24,12 @@ class Layer
 		/**
 		Starts up an engine layer.
 		@return A layer response indicating the result of the operation */
-		virtual LayerResponses startUp() = 0;
+		virtual LayerResponses startLayerUp() = 0;
 
 		/**
 		Shuts down an engine layer.
 		@return A layer response indicating the result of the operation */
-		virtual LayerResponses shutDown() = 0;
+		virtual LayerResponses shutLayerDown() = 0;
 };
 
 #endif

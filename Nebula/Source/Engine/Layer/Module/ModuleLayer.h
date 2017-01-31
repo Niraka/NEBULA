@@ -26,12 +26,12 @@ class ModuleLayer :
 		/**
 		Starts up the module layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses startUp();
+		LayerResponses startLayerUp();
 
 		/**
 		Shuts down the module layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses shutDown();
+		LayerResponses shutLayerDown();
 };
 
 #endif

@@ -1,17 +1,17 @@
 /**
-The content layer.
+The resource layer.
 
 @date edited 10/09/2016
 @date authored 10/09/2016
 
 @author Nathan Sainsbury */
 
-#ifndef CONTENT_LAYER_H
-#define CONTENT_LAYER_H
+#ifndef RESOURCE_LAYER_H
+#define RESOURCE_LAYER_H
 
 #include "Engine/Layer/Layer.h"
 
-class ContentLayer :
+class ResourceLayer :
 	public Layer
 {
 	private:
@@ -20,18 +20,18 @@ class ContentLayer :
 
 	public:
 		/**
-		Constructs a content layer. */
-		ContentLayer();
+		Constructs a resource layer. */
+		ResourceLayer();
 
 		/**
-		Starts up the content layer.
+		Starts up the resource layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses startUp();
+		LayerResponses startLayerUp();
 
 		/**
-		Shuts down the content layer.
+		Shuts down the resource layer.
 		@return A layer response indicating the result of the operation */
-		LayerResponses shutDown();
+		LayerResponses shutLayerDown();
 };
 
 #endif

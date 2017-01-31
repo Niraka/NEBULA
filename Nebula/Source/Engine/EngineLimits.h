@@ -2,7 +2,7 @@
 An engine limits structure is used during engine initialisation to specify a series of properties
 regarding the desired configuration of the engines components.
 
-@date edited 10/09/2016
+@date edited 31/01/2017
 @date authored 10/09/2016
 
 @author Nathan Sainsbury */
@@ -13,17 +13,25 @@ regarding the desired configuration of the engines components.
 struct EngineLimits
 {
 	/**
-	Constructs a set of limits. */
-	EngineLimits();
+	Constructs a default engine limits structure. */
+	EngineLimits()
+	{
+		setToDefaults();
+	}
 
 	/**
-	Sets all limit properties to their default values. */
-	void setDefaults();
+	Sets all fields to their default values. */
+	void setToDefaults()
+	{
+	}
 
 	/**
 	Queries whether the current limits are valid or not.
 	@return True if the limits were valid, false otherwise */
-	bool isValid() const;
+	bool isValid() const
+	{
+		return true;
+	}
 };
 
 #endif

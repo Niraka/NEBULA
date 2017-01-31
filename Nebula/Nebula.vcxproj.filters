@@ -86,6 +86,18 @@
     <Filter Include="Documents">
       <UniqueIdentifier>{0edc4db2-e0c9-4708-b9e6-c6386f48a3c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\Layer\System">
+      <UniqueIdentifier>{786f8b33-37a7-4efc-9e70-c76bcc88883c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Layer\Content">
+      <UniqueIdentifier>{c2d2099c-8f2f-4dec-9f3f-a4371ed8eda6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Layer\Module">
+      <UniqueIdentifier>{066349a7-9173-482a-90dd-aed1483b4260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Layer\Resource">
+      <UniqueIdentifier>{9bde2e28-5751-4dcf-ac25-a5f569b5b285}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Launch\Launcher.cpp">
@@ -94,22 +106,7 @@
     <ClCompile Include="Source\Engine\Engine.cpp">
       <Filter>Source\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\EngineLimits.cpp">
-      <Filter>Source\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Layer\Layer.cpp">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Layer\ContentLayer.cpp">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Layer\ModuleLayer.cpp">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Layer\ResourceLayer.cpp">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Layer\SystemLayer.cpp">
       <Filter>Source\Engine\Layer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp">
@@ -123,6 +120,18 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\System\Schedule\ScheduledItem.cpp">
       <Filter>Source\Engine\System\Schedule</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Layer\Content\ContentLayer.cpp">
+      <Filter>Source\Engine\Layer\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Layer\Module\ModuleLayer.cpp">
+      <Filter>Source\Engine\Layer\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Layer\Resource\ResourceLayer.cpp">
+      <Filter>Source\Engine\Layer\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Layer\System\SystemLayer.cpp">
+      <Filter>Source\Engine\Layer\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,18 +148,6 @@
       <Filter>Source\Engine\Layer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Layer\LayerResponses.h">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Layer\ContentLayer.h">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Layer\ModuleLayer.h">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Layer\ResourceLayer.h">
-      <Filter>Source\Engine\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Layer\SystemLayer.h">
       <Filter>Source\Engine\Layer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\Bounds.h">
@@ -326,6 +323,18 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Schedule\SchedulerIntervals.h">
       <Filter>Source\Engine\System\Schedule</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Layer\Content\ContentLayer.h">
+      <Filter>Source\Engine\Layer\Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Layer\Module\ModuleLayer.h">
+      <Filter>Source\Engine\Layer\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Layer\Resource\ResourceLayer.h">
+      <Filter>Source\Engine\Layer\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Layer\System\SystemLayer.h">
+      <Filter>Source\Engine\Layer\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

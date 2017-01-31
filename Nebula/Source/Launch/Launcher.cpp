@@ -1,7 +1,7 @@
 /**
 The launcher is the entry point to the program.
 
-@date edited 24/11/2016
+@date edited 31/01/2017
 @date authored 10/09/2016
 
 @author Nathan Sainsbury */
@@ -16,15 +16,12 @@ The launcher is the entry point to the program.
 
 #include <GLM\glm.hpp>
 
-#include <map>
 #include <string>
 #include <iostream>
 
 #include "Engine/EngineBuildConfig.h"
 #include "Engine/EngineLimits.h"
 #include "Engine/Engine.h"
-
-#include "Engine/System/Tools/DirectoryListing.h"
 
 int main()
 {
@@ -70,7 +67,7 @@ int main()
 	std::string sInput = "";
 	while (sInput != "1")
 	{	
-		std::cout << std::endl << "=== Nebula launch menu ===" << std::endl;
+		std::cout << "=== Nebula launch menu ===" << std::endl;
 		std::cout << "1) Exit engine" << std::endl;
 		std::cout << "2) Start engine" << std::endl;
 
@@ -103,6 +100,8 @@ int main()
 				std::cout << "Done" << std::endl;
 			}
 		}
+
+		std::cout << std::endl;
 	}
 
 	return 0;
