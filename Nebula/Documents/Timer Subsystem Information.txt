@@ -1,0 +1,59 @@
+TimerSubsystem information:
+
+
+System brief:
+
+The timer subsystem is a component of the system layer of the engine. Its purpose is to handle the
+creation, deletion, evaluation and modification of "timers" that have been created by the engine and
+its users.
+
+
+System requirements:
+
+- To be fully managed and self contained
+The system should not allow users to extract objects that would present opportunities to corrupt the 
+state of the system or the validity of any objects within it.
+
+- To be informed of the current time
+The system should not acquire the current time itself and should instead provide an interface for 
+receiving the current time. Doing this allows for greater flexibility in time acquisition choices.
+
+- To perform efficiently
+It is not uncommon for games to make heavy use of timers to track a vast array of functionality. For
+example: A characters abilities, the time of day, the time a player has been alive or the time until
+the next wave of enemies. As such, it is important that the system performs efficiently at all times.
+
+- To be configurable prior to execution
+It should be possible to provide to the system a configuration that outlines the users requirements.
+Through information provided by the configuration, the system should be able to optimise for runtime
+performance, memory footprint and robustness.
+
+- To optionally track and provide access to runtime data
+The system should track information about the usage of the system that can be retrieved by users. The
+information will be used to better inform the systems configuration. This tracking should be removable
+for high-performance builds of the engine.
+
+- To provide a method of reading events
+The system should provide a method of reading events that have been produced by the system. Unlike
+other event systems, the timer system should allow users to read all pending events without removing
+them from an internal event queue. This allows timer system events to be handled by multiple locations
+without collision.
+
+- To provide a simple method of creating timers
+The system should provide a straight-forward method of creating timers with a given configuration. The
+configuration should also be simple and easy to use.
+
+- To provide a simple method of manipulating/modifying timers
+The system should provide a straight-forward method of modifying the properties of timers that exist
+within the system. The types of modifications permitted should ensure that no corruption of state can
+occur.
+
+- To provide timers that cover the following functionality:
+- - A timer that counts upwards from 0 akin to a stopwatch
+- - A timer that counts down a duration until it reaches 0
+
+- To provide a means of "hiding" timer events from certain event-parsing locations
+The system should provide a way to hide the existence of a timer event from one, more or all-but-one
+event parsing location. This functionality will enable users to quickly filter out events that are of
+no interest to them as well as ensuring events are not triggering functionality elsewhere within
+the engine unintentionally

@@ -59,9 +59,10 @@ The prefixes are:
 	  	  
 Example commit message using [MUL]:
 
-Title: [MUL] Iterators
-Msg  : [FTR]
-       Added iterators to each of the container types.
+Title: [MUL] Iterator development continued
+Msg  : (Optional introductory message)
+	   [FTR]
+       + Added iterators to each of the container types.
 	   
 	   [MOD]
 	   + Red black trees not track the left-most element
@@ -229,6 +230,8 @@ Content layer
 ==================================================================================================
 ==================================================================================================
 
-Approximate Schedule of Development (On-going modification):
-
-See "TASKLIST.txt"
+ Currently active task:
+ 
+ Development of timer subsystem
+ 
+ See Timer Subsystem Information.txt for more information (./Nebula/Documents)
