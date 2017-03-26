@@ -109,9 +109,6 @@
     <ClCompile Include="Source\Engine\Layer\Layer.cpp">
       <Filter>Source\Engine\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\System\Tools\DirectoryListing.cpp">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\System\Schedule\SchedulerRate.cpp">
       <Filter>Source\Engine\System\Schedule</Filter>
     </ClCompile>
@@ -153,9 +150,6 @@
     <ClInclude Include="Source\Engine\System\Tools\Bounds.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Pair.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\StandardResponses.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
@@ -165,127 +159,7 @@
     <ClInclude Include="Source\Engine\System\Tools\LanguageExtensions.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Array.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedArray.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedArrayEntry.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\TrackedArray.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Id.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Queue.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\QueueNode.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Stack.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\StackNode.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Vector.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedVectorEntry.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicArray.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicVector.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Set.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTree.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTreeNode.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTreeNodeColours.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\Map.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\MapKeyComparator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTreeElementBuilder.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\MapElementBuilder.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\System\Tools\DirectoryListing.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\VectorIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTreeIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicVectorIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\ArrayIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicArrayIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedArrayIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedVectorIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicArrayConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\ArrayConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedArrayConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\CyclicVectorConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\IndexedVectorConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\TrackedArrayConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\RBTreeConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\VectorConstIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\TrackedArrayIterator.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\FakeParam.h">
-      <Filter>Source\Engine\System\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\System\Tools\SetKeyComparator.h">
       <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\System\Schedule\SchedulerTimeInfo.h">
@@ -335,6 +209,15 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\Layer\System\SystemLayer.h">
       <Filter>Source\Engine\Layer\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedArray.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\IndexedVector.h">
+      <Filter>Source\Engine\System\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\System\Tools\RandomNumberGenerator.h">
+      <Filter>Source\Engine\System\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

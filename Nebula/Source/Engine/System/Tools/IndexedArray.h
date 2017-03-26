@@ -1,775 +1,664 @@
 /**
-An indexed array is a fixed size container that specialises in quick insertion and deletion of
-versioned elements.
+An indexed array is a container class that extends upon a standard array to add tracking 
+functionality. Each index is assigned a version number that tracks the number of times the element
+at that index has been swapped out. By comparing Id objects to the current version number at an
+index a user can quickly identify whether an element exists or not.
 
-To summarise, an indexed array uses Id objects that track both the version and index number of
-an inserted element. The index number is used to move directly to the target index rather than
-searching for an element. The version number allows the container to reuse indices whilst still
-being able to determine which elements still exist.
+Element access occurs through the use of Id objects and Iterators. Iterators only iterate over
+active elements even though each element exists in a valid state.
 
-Ranged based operations are not implemented for this container as their usage generally indicates
-an incorrect choice of container. Users should prefer id-based functionality.
+Ids are composed of the index that the element currently resides at and a unique* version number 
+that increments each time the stored object is replaced.
 
-Attempting to retrieve an element with a version number that does not match the current indices'
-version number is equivalent to out of bounds access.
+*Note that if the version number overflows, Ids are no longer unique. Users should consider this
+when selecting their container of choice.
 
-Elements must be:
-- Non-const
-- Default constructible
-- Copy assignable
-- Copy constructible
-
-@see Id
-@see Array
-@see TrackedArray
-@see CyclicArray
-
-@date edited 30/01/2017
-@date authored 11/09/2016
+@date authored 26/03/2017
+@date edited 14/03/2017
 
 @author Nathan Sainsbury */
 
 #ifndef INDEXED_ARRAY_H
 #define INDEXED_ARRAY_H
 
-#include <type_traits>
+struct IndexedArrayId
+{
+	/**
+	The index. */
+	size_t uiIndex;
 
-#include "Engine/System/Tools/FakeParam.h"
-#include "Engine/System/Tools/LanguageExtensions.h"
-#include "Engine/EngineBuildConfig.h"
-#include "Engine/System/Tools/Id.h"
-#include "Engine/System/Tools/IndexedArrayEntry.h"
-#include "Engine/System/Tools/IndexedArrayIterator.h"
-#include "Engine/System/Tools/IndexedArrayConstIterator.h"
+	/**
+	The version number. */
+	size_t uiVersion;
 
-template <class ElementType, class IndexType, IndexType m_iMaxElements>
-class IndexedArray
+	IndexedArrayId() : 
+		uiIndex(0), 
+		uiVersion(0) 
+	{
+	}
+
+	IndexedArrayId(size_t uiIndex, size_t uiVersion) : 
+		uiIndex(uiIndex), 
+		uiVersion(uiVersion) 
+	{
+	}
+};
+
+template <typename ElementType>
+struct IndexedArrayEntry
+{
+	/**
+	Whether the entry currently contains a live element or not. */
+	bool bIsActive;
+
+	/**
+	The version number. */
+	size_t uiVersionNumber;
+
+	/**
+	The stored element. */
+	ElementType element;
+
+	IndexedArrayEntry() : 
+		bIsActive(false), 
+		uiVersionNumber(0), 
+		element(ElementType()) 
+	{
+	}
+
+	IndexedArrayEntry(bool bIsActive, size_t uiVersionNumber, const ElementType& element) :
+		bIsActive(bIsActive), 
+		uiVersionNumber(uiVersionNumber), 
+		element(element)
+	{
+	}
+};
+
+template <typename ElementType>
+class IndexedArrayIterator
 {
 	private:
-		IndexedArrayEntry<ElementType, IndexType> m_data[m_iMaxElements];
-		IndexType m_iNumElements;
-		IndexType m_iLowestElement;
-		IndexType m_iHighestElement;
-		IndexType m_iHighestElementPlusOne;
+		typedef IndexedArrayEntry<ElementType> Entry;
+		typedef IndexedArrayIterator<ElementType> Iterator;
+		typedef IndexedArrayId Id;
 
-		/**
-		Resolves the lowest and highest active element indexes upon the removal of an element.
-		@param iModifiedIndex The index of the element that was removed */
-		void resolveLowHighOnRemoval(IndexType iModifiedIndex)
+	public:
+		IndexedArrayIterator() :
+			m_pElement(nullptr),
+			m_uiElementIndex(0),
+			m_uiMaxIndex(0)
 		{
-			if (m_iNumElements == 0)
-			{
-				m_iLowestElement = 0;
-				m_iHighestElement = 0;
-				m_iHighestElementPlusOne = 0;
-			}
-			else
-			{
-				if (iModifiedIndex == m_iHighestElement)
-				{
-					while (!m_data[iModifiedIndex].bActive)
-					{
-						--iModifiedIndex;
-					}
+		}
 
-					m_iHighestElement = iModifiedIndex;
-					m_iHighestElementPlusOne = m_iHighestElement + 1;
-				}
-				else if (iModifiedIndex == m_iLowestElement)
-				{
-					while (!m_data[iModifiedIndex].bActive)
-					{
-						++iModifiedIndex;
-					}
+		IndexedArrayIterator(Entry* pElement,
+			size_t uiElementIndex,
+			size_t uiMaxIndex) :
+			m_pElement(pElement),
+			m_uiElementIndex(uiElementIndex),
+			m_uiMaxIndex(uiMaxIndex)		
+		{
+		}
 
-					m_iLowestElement = iModifiedIndex;
-				}
+		~IndexedArrayIterator()
+		{
+			m_pElement = nullptr;
+		}
+
+		bool operator==(const Iterator& other) const
+		{
+			return m_pElement == other.m_pElement;
+		}
+
+		bool operator!=(const Iterator& other) const
+		{
+			return m_pElement != other.m_pElement;
+		}
+
+		Iterator& operator++()
+		{
+			if (m_uiElementIndex == m_uiMaxIndex)
+			{
+				return *this;
 			}
+
+			do
+			{
+				++m_pElement;
+				++m_uiElementIndex;
+			} 
+			while (m_uiElementIndex < m_uiMaxIndex && !m_pElement->bIsActive);
+
+			return *this;
+		}
+
+		Iterator operator++(int)
+		{
+			Iterator temp = *this;
+			++(*this);
+			return temp;
+		}
+
+		Iterator& operator--()
+		{
+			if (m_uiElementIndex == 0)
+			{
+				return *this;
+			}
+
+			do
+			{
+				--m_pElement;
+				--m_uiElementIndex;
+			} 
+			while (m_uiElementIndex > 0 && !m_pElement->bIsActive);
+
+			return *this;
+		}
+
+		Iterator operator--(int)
+		{
+			Iterator temp = *this;
+			--(*this);
+			return temp;
+		}
+
+		ElementType* operator->() const
+		{
+			return &(m_pElement->element);
+		}
+
+		ElementType& operator*() const
+		{
+			return m_pElement->element;
+		}
+
+		Id elementId() const
+		{
+			return Id(m_uiElementIndex, m_pElement->uiVersionNumber);
+		}
+
+	protected:
+	private:
+		Entry* m_pElement;
+		size_t m_uiElementIndex;
+		size_t m_uiMaxIndex;
+};
+
+template <typename ElementType>
+class IndexedArrayConstIterator
+{
+	private:
+		typedef IndexedArrayEntry<ElementType> Entry;
+		typedef IndexedArrayConstIterator<ElementType> Iterator;
+		typedef IndexedArrayId Id;
+
+	public:
+		IndexedArrayConstIterator() :
+			m_pElement(nullptr),
+			m_uiElementIndex(0)
+		{
+		}
+
+		IndexedArrayConstIterator(Entry* pElement, 
+			size_t uiElementIndex,
+			size_t uiMaxIndex) :
+			m_pElement(pElement),
+			m_uiElementIndex(uiElementIndex),
+			m_uiMaxIndex(uiMaxIndex)
+		{
+		}
+
+		~IndexedArrayConstIterator()
+		{
+			m_pElement = nullptr;
+		}
+
+		bool operator==(const Iterator& other) const
+		{
+			return m_pElement == other.m_pElement;
+		}
+
+		bool operator!=(const Iterator& other) const
+		{
+			return m_pElement != other.m_pElement;
+		}
+
+		Iterator& operator++()
+		{
+			if (m_uiElementIndex == m_uiMaxIndex)
+			{
+				return *this;
+			}
+
+			do
+			{
+				++m_pElement;
+				++m_uiElementIndex;
+			} 
+			while (m_uiElementIndex < m_uiMaxIndex && !m_pElement->bIsActive);
+
+			return *this;
+		}
+
+		Iterator operator++(int)
+		{
+			Iterator temp = *this;
+			++(*this);
+			return temp;
+		}
+
+		Iterator& operator--()
+		{
+			if (m_uiElementIndex == 0)
+			{
+				return *this;
+			}
+
+			do
+			{
+				--m_pElement;
+				--m_uiElementIndex;
+			} 
+			while (m_uiElementIndex > 0 && !m_pElement->bIsActive);
+
+			return *this;
+		}
+
+		Iterator operator--(int)
+		{
+			Iterator temp = *this;
+			--(*this);
+			return temp;
+		}
+
+		const ElementType* operator->() const
+		{
+			return &(m_pElement->element);
+		}
+
+		const ElementType& operator*() const
+		{
+			return m_pElement->element;
+		}
+
+		Id elementId() const
+		{
+			return Id(m_uiElementIndex, m_pElement->uiVersionNumber);
 		}
 
 	protected:
 
+	private:
+		Entry* m_pElement;
+		size_t m_uiElementIndex;
+		size_t m_uiMaxIndex;
+};
+
+template <typename ElementType, size_t m_uiMaxElements>
+class IndexedArray
+{
+	private:
+		typedef IndexedArray<ElementType, m_uiMaxElements> Array;
+		typedef IndexedArrayEntry<ElementType> Entry;
+
 	public:
-		typedef IndexedArrayIterator<ElementType, IndexType> Iterator;
-		typedef IndexedArrayConstIterator<ElementType, IndexType> ConstIterator;
+		typedef IndexedArrayConstIterator<ElementType> ConstIterator;
+		typedef IndexedArrayIterator<ElementType> Iterator;
+		typedef IndexedArrayId Id;
+
+		static_assert((m_uiMaxElements > 0), "IndexedArray template parameter 'm_uiMaxElements' "
+			"must be >= 1.");
+		static_assert(!std::is_const<ElementType>::value, "IndexedArray does not support const "
+			"element types.");
+		static_assert(std::is_default_constructible<ElementType>::value, "IndexedArray template "
+			"parameter 'ElementType' must be default constructible.");
+		static_assert(std::is_copy_assignable<ElementType>::value, "IndexedArray requires elements "
+			"to be copy assignable");
+		static_assert(std::is_destructible<ElementType>::value, "IndexedArray requires elements "
+			"to be destructible");		
 
 		/**
 		Constructor. */
-		IndexedArray()
+		IndexedArray() :
+			m_uiNumElements(0)
 		{
-			static_assert(!std::is_const<ElementType>::value, "IndexedArray does not support "
-				"const element types");
-			static_assert(std::is_default_constructible<ElementType>::value, "IndexedArray "
-				"requires elements to be default constructible");
-			static_assert(std::is_copy_constructible<ElementType>::value, "IndexedArray "
-				"requires elements to be copy constructible");
-			static_assert(std::is_copy_assignable<ElementType>::value, "IndexedArray requires "
-				"elements to be copy assignable");
-
-			reset();
+			m_pElements = new Entry[m_uiMaxElements];
 		}
 
 		/**
 		Destructor. */
 		~IndexedArray()
 		{
+			delete[] m_pElements;
 		}
 
 		/**
-		Resets the container. All elements are reinitialised and internal version counters are reset. */
-		void reset()
+		Copy constructor.
+		@param other The indexed array to copy */
+		IndexedArray(const Array& other) :
+			m_uiNumElements(other.m_uiNumElements)
 		{
-			for (IndexType iCurrentIndex = 0; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
+			m_pElements = new Entry[m_uiMaxElements];
+			for (size_t i = 0; i < m_uiMaxElements; ++i)
 			{
-				m_data[iCurrentIndex].data = ElementType();
-				m_data[iCurrentIndex].version = 1;
-				m_data[iCurrentIndex].bActive = false;
+				m_pElements[i] = other.m_pElements[i];
 			}
-
-			m_iLowestElement = 0;
-			m_iHighestElement = 0;
-			m_iHighestElementPlusOne = 0;
-			m_iNumElements = 0;
 		}
 
 		/**
-		Pushes an element on to the back of the array and assigns it an id. If the container was
-		full the element will not be appended and an invalid id will be returned.
-		@param element The element to append to the array 
-		@return The elements id, or an invalid id */
-		Id<IndexType> push(const ElementType& element)
+		Move-copy constructor.
+		@param other The indexed array to copy */
+		IndexedArray(Array&& other) :
+			m_uiNumElements(other.m_uiNumElements),
+			m_pElements(other.m_pElements)
 		{
-			IndexType iCurrentIndex = 0;
-			for (; iCurrentIndex < m_iMaxElements; ++iCurrentIndex)
-			{
-				if (!m_data[iCurrentIndex].bActive)
-				{
-					m_data[iCurrentIndex].bActive = true;
-					m_data[iCurrentIndex].data = element;
-					++m_data[iCurrentIndex].version;
-					++m_iNumElements;
-
-					if (m_iNumElements == 1)
-					{
-						m_iHighestElementPlusOne = 1;
-					}
-					else
-					{
-						if (iCurrentIndex > m_iHighestElement)
-						{
-							m_iHighestElement = iCurrentIndex;
-							m_iHighestElementPlusOne = m_iHighestElement + 1;
-						}
-						if (iCurrentIndex < m_iLowestElement)
-						{
-							m_iLowestElement = iCurrentIndex;
-						}
-					}
-
-					return Id<IndexType>(iCurrentIndex, m_data[iCurrentIndex].version);
-				}
-			}
-
-			return Id<IndexType>::createInvalid();
+			other.m_pElements = new Entry[m_uiMaxElements];
+			other.m_uiNumElements = 0;
 		}
 
 		/**
-		Pops the last element off of the back of the array. If no such element existed, no action is 
-		taken. Note that the element is only flagged as removed and is not actually removed. Use 
-		popAndReset to actually remove the element. 
-		@return True if an element was removed, false otherwise */
-		bool pop()
+		Assignment operator.
+		@param other The indexed array to assign from
+		@return A reference to this indexed array */
+		Array& operator=(const Array& other)
 		{
-			if (m_iNumElements > 0)
+			if (this != &other)
 			{
-				m_data[m_iHighestElement].bActive = false;
-				++m_data[m_iHighestElement].version;
-				--m_iNumElements;
+				m_uiNumElements = other.m_uiNumElements;
 
-				if (m_iNumElements == 0)
-				{
-					m_iLowestElement = 0;
-					m_iHighestElement = 0;
-					m_iHighestElementPlusOne = 0;
-				}
-				else
-				{
-					while (!m_data[m_iHighestElement].bActive)
-					{
-						--m_iHighestElement;
-					}
-				}
+				delete[] m_pElements;
 
-				return true;
+				m_pElements = new Entry[m_uiMaxElements];
+				for (size_t i = 0; i < m_uiMaxElements; ++i)
+				{
+					m_pElements[i] = other.m_pElements[i];
+				}
 			}
 
-			return false;
+			return *this;
 		}
 
 		/**
-		Pops the last element off of the back of the array. If no such element existed, no action is
-		taken.
-		@return True if an element was removed, false otherwise */
-		bool popAndReset()
+		Move-assignment operator.
+		@param other The indexed array to assign from
+		@return A reference to this indexed array */
+		Array& operator=(Array&& other)
 		{
-			if (m_iNumElements > 0)
+			if (this != &other)
 			{
-				m_data[m_iHighestElement].bActive = false;
-				m_data[m_iHighestElement].data = ElementType();
-				++m_data[m_iHighestElement].version;
-				--m_iNumElements;
+				delete[] m_pElements;
 
-				if (m_iNumElements == 0)
-				{
-					m_iLowestElement = 0;
-					m_iHighestElement = 0;
-					m_iHighestElementPlusOne = 0;
-				}
-				else
-				{
-					while (!m_data[m_iHighestElement].bActive)
-					{
-						--m_iHighestElement;
-					}
-				}
+				m_pElements = other.m_pElements;
+				m_uiNumElements = other.m_uiNumElements;
 
-				return true;
+				other.m_pElements = new Entry[m_uiMaxElements];
+				other.m_uiNumElements = 0;
 			}
 
-			return false;
+			return *this;
+		}
+
+		/**
+		Swaps the contents of the indexed array with another indexed array of the same type and
+		size.
+		@param other The array to swap contents with */
+		void swap(Array& other)
+		{
+			std::swap(m_uiNumElements, other.m_uiNumElements);
+			std::swap(m_pElements, other.m_pElements);
+		}
+
+		/**
+		Pushes an element on to the indexed array. If the container was full, the element is not 
+		appended and a default id is returned instead.
+		@param element The element to insert
+		@return The elements id, or a default id */
+		Id push(const ElementType& element)
+		{
+			for (size_t i = 0; i < m_uiMaxElements; ++i)
+			{
+				if (!m_pElements[i].bIsActive)
+				{
+					m_pElements[i].bIsActive = true;
+					++m_pElements[i].uiVersionNumber;
+					m_pElements[i].element = element;
+					++m_uiNumElements;
+
+					return Id(i, m_pElements[i].uiVersionNumber);
+				}
+			}
+
+			return Id(0, 0);
+		}
+
+		/**
+		Pushes an element on to the indexed array. If the container was full, the element is not 
+		appended and a default id is returned instead.
+		@param element The element to insert
+		@return The elements id, or a default id */
+		Id push(ElementType&& element)
+		{
+			for (size_t i = 0; i < m_uiMaxElements; ++i)
+			{
+				if (!m_pElements[i].bIsActive)
+				{
+					m_pElements[i].bIsActive = true;
+					++m_pElements[i].uiVersionNumber;
+					m_pElements[i].element = std::move(element);
+					++m_uiNumElements;
+
+					return Id(i, m_pElements[i].uiVersionNumber);
+				}
+			}
+
+			return Id(0, 0);
 		}
 
 		/**
 		Inserts an element at the given index.
 		@param element The element to insert
-		@param iIndex The index to insert at
-		@return The id of the inserted element */
-		Id<IndexType> insert(const ElementType& element, IndexType iIndex)
+		@param uiIndex The index to insert at
+		@return The elements id, or a default id */
+		Id insert(const ElementType& element, size_t uiIndex)
 		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (iIndex >= m_iMaxElements)
+			if (uiIndex < m_uiMaxElements)
 			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(iIndex));
-			}
-			#endif
-
-			if (iIndex < m_iMaxElements)
-			{
-				if (!m_data[iIndex].bActive)
+				if (!m_pElements[uiIndex].bIsActive)
 				{
-					m_data[iIndex].bActive = true;
-					++m_iNumElements;
-
-					if (m_iNumElements == 1)
-					{
-						m_iLowestElement = iIndex;
-						m_iHighestElement = iIndex;
-						m_iHighestElementPlusOne = m_iHighestElement + 1;
-					}
-					else
-					{
-						if (iIndex > m_iHighestElement)
-						{
-							m_iHighestElement = iIndex;
-							m_iHighestElementPlusOne = m_iHighestElement + 1;
-						}
-						if (iIndex < m_iLowestElement)
-						{
-							m_iLowestElement = iIndex;
-						}
-					}
+					m_pElements[uiIndex].bIsActive = true;
+					++m_uiNumElements;
 				}
 
-				m_data[iIndex].data = element;
-				++m_data[iIndex].version;
-				return Id<IndexType>(iIndex, m_data[iIndex].version);
-			}
+				++m_pElements[uiIndex].uiVersionNumber;
+				m_pElements[uiIndex].element = element;
 
-			return Id<IndexType>::createInvalid();
-		}
-
-		/**
-		Retrieves a reference to an element. If the element did not exist, this function invokes
-		undefined behaviour.
-		@param id The id of the element to get
-		@return A reference to an element
-		@see tryToGet() */
-		ElementType& operator[](const Id<IndexType>& id)
-		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
-			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
-
-			if (m_data[id.index].version == id.version)
-			{
-				return m_data[id.index].data;
+				return Id(uiIndex, m_pElements[uiIndex].uiVersionNumber);
 			}
 			else
 			{
-				fatalexit("Attempting to access non-existent indexed array element. Current version: " +
-					std::to_string(m_data[id.index].version) + ". Attempted version: " +
-					std::to_string(id.version));
+				return Id(0, 0);
 			}
 		}
 
 		/**
-		Retrieves a reference to an element. If the element did not exist, this function invokes
-		undefined behaviour.
-		@param id The id of the element to get 
-		@return A reference to an element 
-		@see tryToGet() */
-		ElementType& get(const Id<IndexType>& id) 
+		Inserts an element at the given index.
+		@param element The element to insert
+		@param uiIndex The index to insert at
+		@return The elements id, or a default id */
+		Id insert(ElementType&& element, size_t uiIndex)
 		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
+			if (uiIndex < m_uiMaxElements)
 			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
+				if (!m_pElements[uiIndex].bIsActive)
+				{
+					m_pElements[uiIndex].bIsActive = true;
+					++m_uiNumElements;
+				}
 
-			if (m_data[id.index].version == id.version)
-			{
-				return m_data[id.index].data;
+				++m_pElements[uiIndex].uiVersionNumber;
+				m_pElements[uiIndex].element = std::move(element);
+
+				return Id(uiIndex, m_pElements[uiIndex].uiVersionNumber);
 			}
 			else
 			{
-				fatalexit("Attempting to access non-existent indexed array element. Current version: " + 
-					std::to_string(m_data[id.index].version) + ". Attempted version: " + 
-					std::to_string(id.version));
+				return Id(0, 0);
 			}
 		}
 
 		/**
-		Retrieves a pointer to an element. If the element did not exist, a nullptr is returned instead.
-		@param id The id of the element to get
-		@return A pointer to an element, or a nullptr 
-		@see get() */
-		ElementType* tryToGet(const Id<IndexType>& id)
+		Returns an iterator to an element with the given id. If no such element existed, the 
+		iterator will address the end iterator.
+		@param id An id
+		@return An iterator to the element, or an iterator to the end */
+		Iterator find(const Id& id) const
 		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
+			if (id.uiIndex < m_uiMaxElements)
 			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
-
-			if (m_data[id.index].version == id.version)
-			{
-				return &m_data[id.index].data;
-			}
-			else
-			{
-				return nullptr;
-			}
-		}
-
-		/**	
-		Removes an element with the given id. Note that the element is only flagged as removed and
-		is not actually removed. Use removeAndReset to actually remove the element.
-		@param id The id of the element to remove 
-		@return The number of elements removed, which is at most 1 */
-		IndexType remove(const Id<IndexType>& id)
-		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
-			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
-
-			if (m_data[id.index].version == id.version)
-			{
-				++m_data[id.index].version;
-				m_data[id.index].bActive = false;
-				--m_iNumElements;
-
-				resolveLowHighOnRemoval(id.index);
-				return (IndexType)1;
-			}
-
-			return (IndexType)0;
-		}
-
-		/**
-		Removes and resets an element with the given id.
-		@param id The id of the element to remove 
-		@return The number of elements removed, which is at most 1 */
-		IndexType removeAndReset(const Id<IndexType>& id)
-		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
-			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
-
-			if (m_data[id.index].version == id.version)
-			{
-				m_data[id.index].data = ElementType();
-				++m_data[id.index].version;
-				m_data[id.index].bActive = false;
-				--m_iNumElements;
-
-				resolveLowHighOnRemoval(id.index);
-				return (IndexType)1;
-			}
-
-			return (IndexType)0;
-		}
-
-		/**
-		Removes the first element that compares equal to the given element. Note that the element
-		is only flagged as removed and is not actually removed. Use removeAndReset to actually 
-		remove the element.
-		@param element The element to remove
-		@return The number of elements removed, which is at most 1 */
-		IndexType remove(const ElementType& element)
-		{
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
-			{
-				if (m_data[iCurrentIndex].bActive)
+				if (m_pElements[id.uiIndex].uiVersionNumber == id.uiVersion)
 				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						m_data[iCurrentIndex].bActive = false;
-						++m_data[iCurrentIndex].version;
-						--m_iNumElements;
-
-						resolveLowHighOnRemoval(iCurrentIndex);
-						return (IndexType)1;
-					}
-				}
-			}
-
-			return (IndexType)0;
-		}
-
-		/**
-		Removes and resets the first element that compares equal to the given element.
-		@param element The element to remove
-		@return The number of elements removed, which is at most 1 */
-		IndexType removeAndReset(const ElementType& element)
-		{
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
-			{
-				if (m_data[iCurrentIndex].bActive)
-				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						m_data[iCurrentIndex].data = ElementType();
-						m_data[iCurrentIndex].bActive = false;
-						++m_data[iCurrentIndex].version;
-						--m_iNumElements;
-
-						resolveLowHighOnRemoval(iCurrentIndex);
-						return (IndexType)1;
-					}
-				}
-			}
-
-			return (IndexType)0;
-		}
-
-		/**
-		Removes all elements that compare equal to the given element. Note that the element is only
-		flagged as removed and is not actually removed. Use removeAllAndReset to actually remove 
-		the element.
-		@param element The element to remove
-		@return The number of elements removed */
-		IndexType removeAll(const ElementType& element)
-		{
-			IndexType iRemovalCount = 0;
-
-			IndexType iCurrentIndex = m_iLowestElement;
-			while (iCurrentIndex < m_iHighestElementPlusOne)
-			{
-				if (m_data[iCurrentIndex].bActive)
-				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						m_data[iCurrentIndex].bActive = false;
-						++m_data[iCurrentIndex].version;
-						--m_iNumElements;
-						++iRemovalCount;
-
-						resolveLowHighOnRemoval(iCurrentIndex);
-					}
-					else
-					{
-						++iCurrentIndex;
-					}
+					return Iterator(&m_pElements[id.uiIndex], id.uiIndex, m_uiMaxElements);
 				}
 				else
 				{
-					++iCurrentIndex;
+					return end();
 				}
 			}
 
-			return iRemovalCount;
+			return end();
 		}
 
 		/**
-		Removes and resets all elements that compare equal to the given element.
-		@param element The element to remove
-		@return The number of elements removed */
-		IndexType removeAllAndReset(const ElementType& element)
+		Removes an element with the given id. If no such element existed, the container is not
+		modified.
+		@param id The id of the element to remove */
+		void remove(const Id& id)
 		{
-			IndexType iRemovalCount = 0;
-
-			IndexType iCurrentIndex = m_iLowestElement;
-			while (iCurrentIndex < m_iHighestElementPlusOne)
+			if (id.uiIndex < m_uiMaxElements)
 			{
-				if (m_data[iCurrentIndex].bActive)
+				if (m_pElements[id.uiIndex].uiVersionNumber == id.uiVersion)
 				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						m_data[iCurrentIndex].bActive = false;
-						m_data[iCurrentIndex].data = ElementType();
-						++m_data[iCurrentIndex].version;
-						--m_iNumElements;
-						++iRemovalCount;
-
-						resolveLowHighOnRemoval(iCurrentIndex);
-					}
-					else
-					{
-						++iCurrentIndex;
-					}
-				}
-				else
-				{
-					++iCurrentIndex;
+					m_pElements[id.uiIndex].bIsActive = false;
+					++m_pElements[id.uiIndex].uiVersionNumber;
+					m_pElements[id.uiIndex].element = ElementType();
+					--m_uiNumElements;
 				}
 			}
-
-			return iRemovalCount;
 		}
 
 		/**
-		Clears the container. All elements are removed. Note that unlike reset, internal version 
-		counters are not reset. */
+		Clears all elements. Version counters are incremented. */
 		void clear()
 		{
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
+			for (size_t i = 0; i < m_uiMaxElements; ++i)
 			{
-				m_data[iCurrentIndex].data = ElementType();
-				++m_data[iCurrentIndex].version;
-				m_data[iCurrentIndex].bActive = false;
+				m_pElements[i].bIsActive = false;
+				++m_pElements[i].uiVersionNumber;
+				m_pElements[i].element = ElementType();
 			}
 
-			m_iNumElements = 0; 
-			m_iLowestElement = 0;
-			m_iHighestElement = 0;
-			m_iHighestElementPlusOne = 0;
+			m_uiNumElements = 0;
 		}
 
 		/**
-		Queries the existence of an element with the given id.
-		@param id The id of the element to search for
-		@return True if an element existed, false if it did not */
-		bool exists(const Id<IndexType>& id) const
+		Clears all elements. Version counters are reset to 0. */
+		void reset()
 		{
-			#ifdef NEB_USE_CONTAINER_CHECKS
-			if (id.index >= m_iMaxElements)
+			for (size_t i = 0; i < m_uiMaxElements; ++i)
 			{
-				fatalexit("Out of bounds indexed array access. Max index: " +
-					std::to_string(m_iMaxElements - 1) + ". Attempted access: " 
-					+ std::to_string(id.index));
-			}
-			#endif
-
-			if (m_data[id.index].version == id.version)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		/** 
-		Queries the existence of an element that compares equal with the given element.
-		@param element The element to search for
-		@return True if the element existed, false if it did not */
-		bool exists(const ElementType& element) const
-		{
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
-			{
-				if (m_data[iCurrentIndex].bActive)
-				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						return true;
-					}
-				}
+				m_pElements[i].bIsActive = false;
+				m_pElements[i].uiVersionNumber = 0;
+				m_pElements[i].element = ElementType();
 			}
 
-			return false;
+			m_uiNumElements = 0;
 		}
 
 		/**
-		Queries the existence of an element.
-		@param pElement A pointer to the element to search for
-		@return True if at least 1 equal element existed, false otherwise */
-		bool exists(typename std::conditional<std::is_pointer<ElementType>::value, FakeParam,
-			const ElementType*>::type pElement) const
+		Constructs and returns an iterator addressing the first element.
+		@return An iterator addressing the first element */
+		Iterator begin() const
 		{
-			// Function disabled for pointer types. Allows the user to search for a 
-			// specific element instead of any element that compares equal.
-
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
-			{
-				if (m_data[iCurrentIndex].bActive)
-				{
-					if (&m_data[iCurrentIndex].data == pElement)
-					{
-						return true;
-					}
-				}
-			}
-
-			return false;
+			return Iterator(&m_pElements[0], 0, m_uiMaxElements);
 		}
 
 		/**
-		Counts the number of times an element that compares equal with the given element exists 
-		within the container.
-		@param element The element to search for
-		@return The number of occurences */
-		IndexType count(const ElementType& element) const
+		Constructs and returns an iterator addressing the end element.
+		@return An iterator addressing the end element */
+		Iterator end() const
 		{
-			IndexType iCount = 0;
-			for (IndexType iCurrentIndex = m_iLowestElement;
-				iCurrentIndex < m_iHighestElementPlusOne;
-				++iCurrentIndex)
-			{
-				if (m_data[iCurrentIndex].bActive)
-				{
-					if (m_data[iCurrentIndex].data == element)
-					{
-						++iCount;
-					}
-				}
-			}
-
-			return iCount;
+			return Iterator(&m_pElements[m_uiMaxElements], m_uiMaxElements, m_uiMaxElements);
 		}
 
 		/**
-		Retrieves the current number of elements.
-		@return The current number of elements */
-		IndexType numElements() const
-		{
-			return m_iNumElements;
-		}
-
-		/**
-		Retrieves the maximum number of elements.
-		@return The maximum number of elements */
-		IndexType maxElements() const
-		{
-			return m_iMaxElements;
-		}
-
-		/**
-		Queries whether the container is empty.
-		@return True if the container is empty, false if it is not */
-		bool isEmpty() const
-		{
-			return m_iNumElements == 0;
-		}
-
-		/**
-		Queries whether the container is not empty.
-		@return True if the container is not empty, false if it is not */
-		bool isNotEmpty() const
-		{
-			return m_iNumElements != 0;
-		}
-
-		/**
-		Queries whether the container is full.
-		@return True if the container is full, false if it is not */
-		bool isFull() const
-		{
-			return m_iNumElements == m_iMaxElements;
-		}
-
-		/**
-		Queries whether the container is not full.
-		@return True if the container is not full, false if it is */
-		bool isNotFull() const
-		{
-			return m_iNumElements != m_iMaxElements;
-		}
-
-		/**
-		Creates an iterator targetting the first element in the array.
-		@return An iterator targetting the first element in the array */
-		Iterator begin()
-		{
-			return Iterator(&m_data[m_iLowestElement],
-				&m_data[m_iHighestElementPlusOne],
-				&m_data[m_iLowestElement]);
-		}
-
-		/**
-		Creates an iterator targetting the theoretical element one past the last element in the
-		array.
-		@return An iterator targetting the theoretical element one past the last element */
-		Iterator end()
-		{
-			return Iterator(&m_data[m_iLowestElement],
-				&m_data[m_iHighestElementPlusOne],
-				&m_data[m_iHighestElementPlusOne]);
-		}
-
-		/**
-		Creates a const iterator targetting the first element in the array.
-		@return A const iterator targetting the first element in the array */
+		Constructs and returns a const iterator addressing the first element.
+		@return A const iterator addressing the first element */
 		ConstIterator cbegin() const
 		{
-			return ConstIterator(&m_data[m_iLowestElement],
-				&m_data[m_iHighestElementPlusOne],
-				&m_data[m_iLowestElement]);
+			return ConstIterator(&m_pElements[0], 0, m_uiMaxElements);
 		}
 
 		/**
-		Creates a const iterator targetting the theoretical element one past the last element in
-		the array.
-		@return A const iterator targetting the theoretical element one past the last element */
+		Constructs and returns a const iterator addressing the end element.
+		@return A const iterator addressing the end element */
 		ConstIterator cend() const
 		{
-			return ConstIterator(&m_data[m_iLowestElement],
-				&m_data[m_iHighestElementPlusOne],
-				&m_data[m_iHighestElementPlusOne]);
+			return ConstIterator(&m_pElements[m_uiMaxElements], m_uiMaxElements, m_uiMaxElements);
 		}
+
+		/**
+		Retrieves the current number of elements in the container.
+		@return The current number of elements */
+		size_t size() const
+		{
+			return m_uiNumElements;
+		}
+
+		/**
+		Retrieves the maximum number of elements in the container.
+		@return The maximum number of elements */
+		size_t capacity() const
+		{
+			return m_uiMaxElements;
+		}
+
+		/**
+		Queries whether the indexed array is empty.
+		@return True if the indexed array is empty, false if it is */
+		bool isEmpty() const
+		{
+			return m_uiNumElements == 0;
+		}
+
+		/**
+		Queries whether the indexed array is not empty.
+		@return True if the indexed array is not empty, false if it is */
+		bool isNotEmpty() const
+		{
+			return m_uiNumElements != 0;
+		}
+
+		/**
+		Queries whether the indexed array is full.
+		@return True if the indexed array is full, false if it is not */
+		bool isFull() const
+		{
+			return m_uiNumElements == m_uiMaxElements;
+		}
+
+		/**
+		Queries whether the indexed array is not full.
+		@return True if the indexed array is not full, false if it is */
+		bool isNotFull() const
+		{
+			return m_uiNumElements != m_uiMaxElements;
+		}
+
+	protected:
+
+	private:
+		Entry* m_pElements;
+		size_t m_uiNumElements;
 };
 
 #endif

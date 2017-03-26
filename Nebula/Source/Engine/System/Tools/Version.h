@@ -1,7 +1,7 @@
 /**
 A version structure provides a convenient method of storing version information.
 
-@date edited 29/01/2017
+@date edited 26/03/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -28,21 +28,21 @@ struct Version
 
 	/**
 	Constructs a default version of 0, 0, 0. */
-	Version()
+	Version() :
+		uiMajor(0),
+		uiMinor(0),
+		uiBuild(0)
 	{
-		this->uiMajor = 0;
-		this->uiMinor = 0;
-		this->uiBuild = 0;
 	}
 
 	/**
 	Constructs a version and sets all components to the given value.
 	@param uiAll The major, minor and build number */
-	Version(std::uint32_t uiAll)
+	Version(std::uint32_t uiAll) :
+		uiMajor(uiAll),
+		uiMinor(uiAll),
+		uiBuild(uiAll)
 	{
-		this->uiMajor = uiAll;
-		this->uiMinor = uiAll;
-		this->uiBuild = uiAll;
 	}
 
 	/**
@@ -50,11 +50,11 @@ struct Version
 	@param uiMajor The major version
 	@param uiMinor The minor version
 	@param uiBuild The build number */
-	Version(std::uint32_t uiMajor, std::uint32_t uiMinor, std::uint32_t uiBuild)
+	Version(std::uint32_t uiMajor, std::uint32_t uiMinor, std::uint32_t uiBuild) :
+		uiMajor(uiMajor),
+		uiMinor(uiMinor),
+		uiBuild(uiBuild)
 	{
-		this->uiMajor = uiMajor;
-		this->uiMinor = uiMinor;
-		this->uiBuild = uiBuild;
 	}
 
 	/**

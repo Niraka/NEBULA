@@ -17,9 +17,8 @@ exceptionally carefully managed).
 #include <chrono>
 #include <algorithm>
 #include <cstdint>
+#include <vector>
 
-#include "Engine/System/Tools/Pair.h"
-#include "Engine/System/Tools/Vector.h"
 #include "Engine/System/Schedule/SchedulerListener.h"
 #include "Engine/System/Schedule/SchedulerTimeInfo.h"
 #include "Engine/System/Schedule/SchedulerItemInfo.h"
@@ -30,28 +29,6 @@ exceptionally carefully managed).
 
 class Scheduler
 {
-	private:
-		const static std::int32_t m_iUnlimitedIndicator = -1;
-		bool m_bSchedulerRunning;
-		SchedulerExecutionData m_executionData;
-		SchedulerConfig m_activeConfig;
-		SchedulerConfig m_pendingConfig;
-		Vector<Pair<ScheduledItem*, SchedulerItemInfo>> m_schedules;
-		Vector<SchedulerListener*> m_schedulerListeners;
-		std::chrono::nanoseconds m_lastLagWarning;
-		std::chrono::nanoseconds m_lagWarningInterval;
-
-		/**
-		Retrieves the current time in nanoseconds.
-		@return The current time in nanoseconds */
-		std::chrono::nanoseconds getTimeNanos();
-
-		/**
-		Resets the scheduler execution data. */
-		void resetExecutionData();
-
-	protected:
-
 	public:
 		/**
 		Constructs a scheduler with a default configuration. */
@@ -124,7 +101,29 @@ class Scheduler
 		Queries the existence of a scheduler listener.
 		@param pListener The listener to search for
 		@return True if the listener existed, false if it did not */
-		bool schedulerListenerExists(SchedulerListener* const pListener) const;
+		bool schedulerListenerExists(SchedulerListener* const pListener) const;	
+
+	protected:
+
+	private:
+		const static std::int32_t m_iUnlimitedIndicator = -1;
+		bool m_bSchedulerRunning;
+		SchedulerExecutionData m_executionData;
+		SchedulerConfig m_activeConfig;
+		SchedulerConfig m_pendingConfig;
+		std::vector<std::pair<ScheduledItem*, SchedulerItemInfo>> m_schedules;
+		std::vector<SchedulerListener*> m_schedulerListeners;
+		std::chrono::nanoseconds m_lastLagWarning;
+		std::chrono::nanoseconds m_lagWarningInterval;
+
+		/**
+		Retrieves the current time in nanoseconds.
+		@return The current time in nanoseconds */
+		std::chrono::nanoseconds getTimeNanos();
+
+		/**
+		Resets the scheduler execution data. */
+		void resetExecutionData();
 };
 
 #endif

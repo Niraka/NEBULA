@@ -110,14 +110,14 @@ void Scheduler::start()
 	timeInfo.fInterpolation = 1.0;
 
 	// Announce start to items
-	for (Pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
+	for (std::pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
 	{
 		schedule.first->onSchedulerStart(timeInfo);
 	}
 
 	// Set the last update time to now for each schedule
 	timeFrameStart = getTimeNanos();
-	for (Pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
+	for (std::pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
 	{
 		schedule.second.timeLastUpdate = timeFrameStart - schedule.second.timestep;
 	}
@@ -130,7 +130,7 @@ void Scheduler::start()
 
 		// Configure time info structure and update each scheduled item
 		timeInfo.timeFrameStart = timeFrameStart;
-		for (Pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
+		for (std::pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
 		{
 			if (schedule.first->isRequestingSchedulerStop())
 			{
@@ -240,7 +240,7 @@ void Scheduler::start()
 	timeInfo.fInterpolation = 1.0;
 
 	// Announce stop to items
-	for (Pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
+	for (std::pair<ScheduledItem*, SchedulerItemInfo>& schedule : m_schedules)
 	{
 		schedule.first->onSchedulerStop(timeInfo);
 	}
@@ -281,18 +281,18 @@ void Scheduler::addScheduledItem(ScheduledItem* const pItem, const SchedulerRate
 	}
 
 	info.timeNextFrame = std::chrono::nanoseconds(0);
-	m_schedules.push(Pair<ScheduledItem*, SchedulerItemInfo>(pItem, info));
+	m_schedules.push_back(std::pair<ScheduledItem*, SchedulerItemInfo>(pItem, info));
 }
 
 void Scheduler::removeScheduledItem(ScheduledItem* const pItem)
 {
-	unsigned int uiCurrentIndex = 0;
-	unsigned int uiMaxIndex = m_schedules.numElements();
-	for (; uiCurrentIndex < uiMaxIndex; ++uiCurrentIndex)
+	auto itCurrent = m_schedules.begin();
+	auto itEnd = m_schedules.end();
+	for (; itCurrent != itEnd; ++itCurrent)
 	{
-		if (m_schedules.get(uiCurrentIndex).first == pItem)
+		if (itCurrent->first == pItem)
 		{
-			m_schedules.removeAndReset(uiCurrentIndex);
+			m_schedules.erase(itCurrent);
 			return;
 		}
 	}
@@ -300,7 +300,7 @@ void Scheduler::removeScheduledItem(ScheduledItem* const pItem)
 
 bool Scheduler::scheduledItemExists(ScheduledItem* const pItem) const
 {
-	for (Pair<ScheduledItem*, SchedulerItemInfo>& pair : m_schedules)
+	for (const std::pair<ScheduledItem*, SchedulerItemInfo>& pair : m_schedules)
 	{
 		if (pair.first == pItem)
 		{
@@ -312,15 +312,31 @@ bool Scheduler::scheduledItemExists(ScheduledItem* const pItem) const
 
 void Scheduler::addSchedulerListener(SchedulerListener* const pListener)
 {
-	m_schedulerListeners.push(pListener);
+	m_schedulerListeners.push_back(pListener);
 }
 
 void Scheduler::removeSchedulerListener(SchedulerListener* const pListener)
 {
-	m_schedulerListeners.removeAndReset(pListener);
+	auto itCurrent = m_schedulerListeners.begin();
+	auto itEnd = m_schedulerListeners.end();
+	for (; itCurrent != itEnd; ++itCurrent)
+	{
+		if (*itCurrent == pListener)
+		{
+			m_schedulerListeners.erase(itCurrent);
+			return;
+		}
+	}
 }
 
 bool Scheduler::schedulerListenerExists(SchedulerListener* const pListener) const
 {
-	return m_schedulerListeners.exists(pListener);
+	for (const SchedulerListener* l : m_schedulerListeners)
+	{
+		if (l == pListener)
+		{
+			return true;
+		}
+	}
+	return false;
 }

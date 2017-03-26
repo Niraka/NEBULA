@@ -5,7 +5,7 @@ The event type field is always valid.
 
 @see SchedulerEventTypes.h
 
-@date edited 20/01/2017
+@date edited 26/03/2017
 @date authored 29/11/2016
 
 @author Nathan Sainsbury */
@@ -23,17 +23,17 @@ struct SchedulerEvent
 	
 	/**
 	Constructs a scheduler event. */
-	SchedulerEvent()
+	SchedulerEvent() :
+		type(SchedulerEventTypes::UNKNOWN_EVENT)
 	{
-		type = SchedulerEventTypes::UNKNOWN_EVENT;
 	}
 
 	/**
 	Constructs a scheduler event of the given type.
 	@param type The event type */
-	SchedulerEvent(SchedulerEventTypes type)
+	SchedulerEvent(SchedulerEventTypes type) :
+		type(type)
 	{
-		this->type = type;
 	}
 };
 

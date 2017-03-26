@@ -20,11 +20,6 @@ Update rates are stored as nanosecond timesteps internally. For example, an upda
 
 class SchedulerRate
 {
-	private:
-		std::chrono::nanoseconds m_timestep;
-
-	protected:
-
 	public:
 		/**
 		Constructs a rate object. Defaults to 60 ticks per second. */
@@ -56,6 +51,11 @@ class SchedulerRate
 		Gets the rate.
 		@return The rate */
 		const std::chrono::nanoseconds& getTimestep() const;
+
+	protected:
+
+	private:
+		std::chrono::nanoseconds m_timestep;
 };
 
 #endif

@@ -17,16 +17,6 @@ with a scheduler using an associated scheduler rate.
 
 class ScheduledItem
 {
-	private:
-
-	protected:
-		bool m_bRequestingSchedulerStop;
-		bool m_bRequestingFrameSkip;
-
-		/**
-		Default constructor. */
-		ScheduledItem();
-
 	public:
 		/**
 		This function is called by the scheduler as close to the requested update rate as possible. 
@@ -58,6 +48,16 @@ class ScheduledItem
 		/**
 		Resets all request flags to false. */
 		void resetFlags();
+
+	protected:
+		bool m_bRequestingSchedulerStop;
+		bool m_bRequestingFrameSkip;
+
+		/**
+		Default constructor. */
+		ScheduledItem();
+
+	private:
 };
 
 #endif

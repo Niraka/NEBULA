@@ -2,7 +2,7 @@
 
 Engine::Engine()
 {
-	m_layers = Vector<Layer*>(4);
+	m_layers.reserve(4);
 }
 
 Engine::Engine(const Engine& other)
@@ -26,10 +26,10 @@ Engine::~Engine()
 
 bool Engine::startUp()
 {
-	m_layers.push(&m_systemLayer);
-	m_layers.push(&m_resourceLayer);
-	m_layers.push(&m_moduleLayer);
-	m_layers.push(&m_contentLayer);
+	m_layers.push_back(&m_systemLayer);
+	m_layers.push_back(&m_resourceLayer);
+	m_layers.push_back(&m_moduleLayer);
+	m_layers.push_back(&m_contentLayer);
 
 	for (Layer* pLayer : m_layers)
 	{

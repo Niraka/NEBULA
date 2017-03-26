@@ -3,7 +3,7 @@ A bounds object specifies a numeric boundary using an upper and lower value.
 
 Note that the lower bound being less than the upper bound is not enforced.
 
-@date edited 11/09/2016
+@date edited 26/03/2017
 @date authored 11/09/2016
 
 @author Nathan Sainsbury */
@@ -11,7 +11,7 @@ Note that the lower bound being less than the upper bound is not enforced.
 #ifndef BOUNDS_H
 #define BOUNDS_H
 
-template <class NumericType>
+template <typename NumericType>
 struct Bounds
 {
 	/**
@@ -24,7 +24,9 @@ struct Bounds
 		
 	/**
 	Constructs a bounds object. */
-	Bounds()
+	Bounds() :
+		lower(0),
+		upper(0)
 	{
 	}
 
@@ -32,10 +34,10 @@ struct Bounds
 	Constructs a bounds object with the given values.
 	@param lower The lower bound
 	@param upper The upper bound */
-	Bounds(NumericType lower, NumericType upper)
+	Bounds(NumericType lower, NumericType upper) :
+		lower(lower),
+		upper(upper)
 	{
-		this->lower = lower;
-		this->upper = upper;
 	}
 
 	/**
